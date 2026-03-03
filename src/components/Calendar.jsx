@@ -498,7 +498,7 @@ const Calendar = () => {
   const filteredEvents = useMemo(() => {
     return exampleEvents.filter(event => {
       const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = filterCategoryId === "All" || event.id === parseInt(filterCategoryId);
+      const matchesCategory = filterCategoryId === "All" || event.colorId === parseInt(filterCategoryId);
       const matchesMonth = event.startDate.getMonth() === selectedMonth || event.endDate.getMonth() === selectedMonth;
       return matchesSearch && matchesCategory && matchesMonth;
     });
@@ -528,7 +528,7 @@ const Calendar = () => {
       const weekEndDate = new Date(fixedYear, selectedMonth, weekStartOffset - firstDay + 7);
       const eventsInWeek = filteredEvents.filter(e => e.startDate <= weekEndDate && e.endDate >= weekStartDate);
       rows.push(
-        <div key={`row-${r}`} className="relative border-b border-white/20 min-h-[140px] flex flex-col bg-black/40">
+        <div key={`row-${r}`} className="relative border-b border-white/20 min-h-[100px] md:min-h-[140px] flex flex-col bg-black/40">
           <div className="grid grid-cols-7 relative z-10">
             {Array.from({ length: 7 }).map((_, i) => {
               const dayIdx = weekStartOffset + i - firstDay;
@@ -536,13 +536,13 @@ const Calendar = () => {
               const isCurrentMonth = date.getMonth() === selectedMonth;
               const isToday = date.toDateString() === today.toDateString();
               return (
-                <div key={`date-${i}`} className="p-3">
-                  <div className={`text-base font-black ${isToday ? "bg-red-600 text-white rounded-full w-9 h-9 flex items-center justify-center shadow-lg" : isCurrentMonth ? "text-white" : "text-white/50"}`}>{date.getDate()}</div>
+                <div key={`date-${i}`} className="p-1 md:p-3">
+                  <div className={`text-xs md:text-base font-black ${isToday ? "bg-red-600 text-white rounded-full w-6 h-6 md:w-9 md:h-9 flex items-center justify-center shadow-lg" : isCurrentMonth ? "text-white" : "text-white/50"}`}>{date.getDate()}</div>
                 </div>
               );
             })}
           </div>
-          <div className="relative z-20 pb-3 px-2 space-y-1.5">
+          <div className="relative z-20 pb-2 px-1 md:px-2 space-y-1">
             {eventsInWeek.map((event) => {
               const eventStart = event.startDate < weekStartDate ? weekStartDate : event.startDate;
               const eventEnd = event.endDate > weekEndDate ? weekEndDate : event.endDate;
@@ -552,7 +552,7 @@ const Calendar = () => {
                 <div key={`${event.id}-${r}`} className="grid grid-cols-7 w-full px-0.5">
                   <motion.div 
                     whileHover={{ scale: 1.02, filter: "brightness(1.2)" }} 
-                    className="text-white text-[11px] h-7 flex items-center px-3 cursor-pointer truncate font-black rounded-lg border border-white/10 shadow-md" 
+                    className="text-white text-[9px] md:text-[11px] h-5 md:h-7 flex items-center px-1 md:px-3 cursor-pointer truncate font-black rounded md:rounded-lg border border-white/10 shadow-md" 
                     style={{ gridColumn: `${startCol} / span ${duration}`, backgroundColor: THEME_RED }} 
                     onClick={() => setSelectedEvent(event)}
                   >
@@ -569,7 +569,7 @@ const Calendar = () => {
   };
 
   return (
-    <div className="pt-16 font-sans relative min-h-screen text-slate-100 overflow-x-hidden">
+    <div className="pt-8 md:pt-16 font-sans relative min-h-screen text-slate-100 overflow-x-hidden">
       <style>{`
         ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: #1a1a1a; }
@@ -581,21 +581,38 @@ const Calendar = () => {
 
       <div className="fixed inset-0 z-0" style={{ backgroundImage: `linear-gradient(to bottom, rgba(46, 49, 146, 0.8), rgba(20, 20, 20, 0.95)), url(${DABuilding})`, backgroundSize: "cover", backgroundPosition: "center" }} />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-        <div className="mb-12 text-center lg:text-left pt-8 w-fit mx-auto lg:mx-0">
-          <h1 className="text-5xl font-black tracking-tighter mb-1 text-white leading-none">DSWD ACADEMY 2026</h1>
-          <p className="text-white font-bold tracking-[1.28em] text-md uppercase flex justify-between mr-[-1.28em]">Training Calendar</p>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6">
+        <div className="mb-8 md:mb-12 text-center lg:text-left pt-4 md:pt-8 w-fit mx-auto lg:mx-0">
+          <h1 className="text-3xl md:text-5xl font-black tracking-tighter mb-1 text-white leading-none">DSWD ACADEMY 2026</h1>
+          <p className="text-white font-bold tracking-[0.5em] md:tracking-[1.28em] text-[10px] md:text-md uppercase flex justify-between mr-[-0.5em] md:mr-[-1.28em]">Training Calendar</p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-10 pb-20">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 pb-20">
           <aside className="w-full lg:w-72 shrink-0 space-y-6">
             <div className="glass-card p-2 rounded-2xl flex">
               <button onClick={() => setView("calendar")} className={`flex-1 py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-black transition-all ${view === "calendar" ? "bg-white text-[#4d55d9] shadow-xl" : "text-white hover:bg-white/10"}`}><BsCalendar3/> Calendar</button>
               <button onClick={() => setView("list")} className={`flex-1 py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-black transition-all ${view === "list" ? "bg-white text-[#4d55d9] shadow-xl" : "text-white hover:bg-white/10"}`}><BsListUl/> List</button>
             </div>
+            
+            {/* MONTHLY INDEX - MOBILE DROPDOWN / DESKTOP LIST */}
             <div className="glass-card rounded-3xl p-5">
-              <p className="text-white font-black uppercase tracking-widest text-[10px] mb-5 ml-2">Monthly Index</p>
-              <div className="space-y-1.5">
+              <p className="text-white font-black uppercase tracking-widest text-[10px] mb-3 md:mb-5 ml-2">Monthly Index</p>
+              
+              {/* Mobile Select */}
+              <div className="block lg:hidden">
+                <select 
+                  className="custom-select w-full bg-white/10 border border-white/20 rounded-xl py-3 px-5 text-sm font-black text-white focus:outline-none"
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+                >
+                  {fullMonths.map((name, index) => (
+                    <option key={name} value={index} className="text-slate-900">{name}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Desktop List */}
+              <div className="hidden lg:block space-y-1.5">
                 {fullMonths.map((name, index) => (
                   <button key={name} onClick={() => setSelectedMonth(index)} className={`w-full py-3 px-5 rounded-xl text-xs font-black text-left transition-all ${selectedMonth === index ? "bg-[#FFE066] text-[#4d55d9] translate-x-2" : "text-white/80 hover:bg-white/10"}`}>
                     <span className="opacity-50 mr-3">{(index + 1).toString().padStart(2, '0')}</span>{name}
@@ -608,18 +625,22 @@ const Calendar = () => {
           <main className="flex-1 min-w-0">
             {view === "calendar" ? (
               <div className="space-y-6">
-                <div className="flex justify-between items-end px-4">
-                   <h2 className="text-5xl font-black text-white tracking-tighter uppercase">{fullMonths[selectedMonth]}</h2>
-                   <span className="text-white/40 font-black text-3xl">2026</span>
+                <div className="flex justify-between items-end px-2 md:px-4">
+                   <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase">{fullMonths[selectedMonth]}</h2>
+                   <span className="text-white/40 font-black text-xl md:text-3xl">2026</span>
                 </div>
-                <div className="grid grid-cols-7 text-center font-black text-white uppercase text-xs tracking-[0.3em] pb-3">
+                <div className="grid grid-cols-7 text-center font-black text-white uppercase text-[9px] md:text-xs tracking-[0.1em] md:tracking-[0.3em] pb-3">
                   {weekdays.map(d => <div key={d}>{d}</div>)}
                 </div>
-                <div className="glass-card rounded-lg overflow-hidden shadow-2xl">{renderCalendarRows()}</div>
+                <div className="glass-card rounded-lg overflow-hidden shadow-2xl overflow-x-auto">
+                  <div className="min-w-[600px] md:min-w-full">
+                    {renderCalendarRows()}
+                  </div>
+                </div>
               </div>
             ) : (
-              <div className="space-y-4">
-                <div className="px-4"><h2 className="text-4xl font-black text-white tracking-tighter uppercase">{fullMonths[selectedMonth]} Catalog</h2></div>
+              <div className="space-y-4 md:space-y-6">
+                <div className="px-2 md:px-4"><h2 className="text-2xl md:text-4xl font-black text-white tracking-tighter uppercase">{fullMonths[selectedMonth]} Catalog</h2></div>
                 <div className="glass-card rounded-3xl p-4 mb-4 flex flex-col md:flex-row gap-4">
                   <div className="relative flex-1">
                     <BsSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-white" size={16} />
@@ -627,35 +648,41 @@ const Calendar = () => {
                   </div>
                   <select className="custom-select bg-black/30 border border-white/20 rounded-xl py-2.5 px-6 text-sm font-black text-white focus:outline-none md:w-64" value={filterCategoryId} onChange={(e) => setFilterCategoryId(e.target.value)}>
                     <option value="All">All Categories</option>
-                    {Object.entries(trainingCategories).map(([id, label]) => <option key={id} value={id}>{label}</option>)}
+                    {Object.entries(trainingCategories).map(([id, label]) => <option key={id} value={id} className="text-slate-900">{label}</option>)}
                   </select>
                 </div>
 
-                {currentEvents.length > 0 ? currentEvents.map(event => {
-                  const showTag = event.tag === "WITH CPD UNITS" || event.tag === "TRAINING OF TRAINERS";
-                  return (
-                    <motion.div key={event.id} onClick={() => setSelectedEvent(event)} className="bg-white rounded-2xl p-4 flex flex-col md:flex-row gap-5 items-center cursor-pointer hover:translate-y-[-2px] transition-all border-l-[6px] border-[#ee1c25] shadow-lg group">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-3 text-[10px] font-black text-slate-500 mb-1 uppercase tracking-wider">
-                          <span className="flex items-center gap-1.5"><BsCalendar3 className="text-red-500"/> {formatDateRange(event.startDate, event.endDate)}</span>
-                          <span className="flex items-center gap-1.5 truncate max-w-[200px]"><BsGeoAltFill className="text-red-500"/> {event.venue}</span>
+                <div className="flex flex-col gap-4 md:gap-6">
+                  {currentEvents.length > 0 ? currentEvents.map(event => {
+                    const showTag = event.tag === "WITH CPD UNITS" || event.tag === "TRAINING OF TRAINERS";
+                    return (
+                      <motion.div 
+                        key={event.id} 
+                        onClick={() => setSelectedEvent(event)} 
+                        className="bg-white rounded-2xl p-6 md:p-5 flex flex-col md:flex-row gap-5 items-start md:items-center cursor-pointer hover:translate-y-[-2px] transition-all border-l-[8px] md:border-l-[6px] border-[#ee1c25] shadow-lg group"
+                      >
+                        <div className="flex-1 min-w-0 w-full">
+                          <div className="flex flex-wrap items-center gap-3 text-[10px] font-black text-slate-500 mb-2 md:mb-1 uppercase tracking-wider">
+                            <span className="flex items-center gap-1.5"><BsCalendar3 className="text-red-500"/> {formatDateRange(event.startDate, event.endDate)}</span>
+                            <span className="flex items-center gap-1.5 truncate max-w-full md:max-w-[200px]"><BsGeoAltFill className="text-red-500"/> {event.venue}</span>
+                          </div>
+                          <h3 className="text-[#4d55d9] font-black text-xl md:text-lg leading-tight group-hover:text-red-600 transition-colors md:truncate">{event.title}</h3>
+                          <p className="text-[10px] font-black text-[#4d55d9] opacity-70 uppercase mt-2 md:mt-1">{trainingCategories[event.colorId]}</p>
                         </div>
-                        <h3 className="text-[#4d55d9] font-black text-lg leading-tight group-hover:text-red-600 transition-colors truncate">{event.title}</h3>
-                        <p className="text-[10px] font-black text-[#4d55d9] opacity-70 uppercase mt-1">{trainingCategories[event.id]}</p>
-                      </div>
-                      {showTag && (
-                        <span className="bg-[#ee1c25] text-white text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-widest whitespace-nowrap">
-                          {event.tag}
-                        </span>
-                      )}
-                    </motion.div>
-                  );
-                }) : (
-                  <div className="py-20 text-center glass-card rounded-3xl text-white font-black text-xl tracking-widest uppercase">No Events Found</div>
-                )}
+                        {showTag && (
+                          <span className="bg-[#ee1c25] text-white text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-widest whitespace-nowrap self-start md:self-center">
+                            {event.tag}
+                          </span>
+                        )}
+                      </motion.div>
+                    );
+                  }) : (
+                    <div className="py-20 text-center glass-card rounded-3xl text-white font-black text-xl tracking-widest uppercase">No Events Found</div>
+                  )}
+                </div>
 
                 {filteredEvents.length > itemsPerPage && (
-                  <div className="flex items-center justify-center gap-6 pt-4 text-white font-black uppercase tracking-tighter text-sm">
+                  <div className="flex items-center justify-center gap-6 pt-6 md:pt-4 text-white font-black uppercase tracking-tighter text-sm">
                     <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} className="flex items-center gap-2 hover:text-[#FFE066] disabled:opacity-30 disabled:hover:text-white transition-all"><BsChevronLeft strokeWidth={2}/> Prev</button>
                     <span className="bg-white/10 px-4 py-1 rounded-full text-xs">{currentPage} <span className="opacity-40 mx-1">out of</span> {totalPages}</span>
                     <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)} className="flex items-center gap-2 hover:text-[#FFE066] disabled:opacity-30 disabled:hover:text-white transition-all">Next <BsChevronRight strokeWidth={2}/></button>
@@ -669,12 +696,12 @@ const Calendar = () => {
 
       <AnimatePresence>
         {selectedEvent && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-[100] p-4" onClick={() => setSelectedEvent(null)}>
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} className="bg-white rounded-[2.5rem] max-w-2xl w-full max-h-[90vh] overflow-y-auto relative text-slate-900 shadow-2xl" onClick={e => e.stopPropagation()}>
-              <div className="h-52 relative">
-                {selectedEvent.image && <img src={selectedEvent.image} className="w-full h-full object-cover rounded-t-[2.5rem]" alt="" />}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[100] p-4" onClick={() => setSelectedEvent(null)}>
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} className="bg-white rounded-[2rem] md:rounded-[2.5rem] max-w-2xl w-full max-h-[95vh] md:max-h-[90vh] overflow-y-auto relative text-slate-900 shadow-2xl" onClick={e => e.stopPropagation()}>
+              <div className="h-40 md:h-52 relative">
+                {selectedEvent.image && <img src={selectedEvent.image} className="w-full h-full object-cover rounded-t-[2rem] md:rounded-t-[2.5rem]" alt="" />}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <button onClick={() => setSelectedEvent(null)} className="absolute top-5 right-5 bg-white/20 backdrop-blur-md text-white rounded-full p-2 hover:bg-red-600 transition-all"><IoClose size={24} /></button>
+                <button onClick={() => setSelectedEvent(null)} className="absolute top-4 right-4 md:top-5 md:right-5 bg-white/20 backdrop-blur-md text-white rounded-full p-2 hover:bg-red-600 transition-all"><IoClose size={24} /></button>
                 {(selectedEvent.tag === "WITH CPD UNITS" || selectedEvent.tag === "TRAINING OF TRAINERS") && (
                   <div className="absolute bottom-4 left-6">
                     <span className="bg-[#ee1c25] text-white text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-lg">
@@ -683,10 +710,10 @@ const Calendar = () => {
                   </div>
                 )}
               </div>
-              <div className="px-10 py-8">
-                <span className="text-[#4d55d9] font-black text-[10px] tracking-[0.2em] uppercase mb-2 block opacity-70">{trainingCategories[selectedEvent.id]}</span>
-                <h2 className="text-2xl font-black mb-6 leading-tight text-slate-900">{selectedEvent.title}</h2>
-                <div className="grid grid-cols-2 gap-4 mb-8">
+              <div className="px-6 md:px-10 py-6 md:py-8">
+                <span className="text-[#4d55d9] font-black text-[10px] tracking-[0.2em] uppercase mb-2 block opacity-70">{trainingCategories[selectedEvent.colorId]}</span>
+                <h2 className="text-xl md:text-2xl font-black mb-6 leading-tight text-slate-900">{selectedEvent.title}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-8">
                   <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center gap-4">
                     <div className="bg-red-50 p-2.5 rounded-xl"><BsCalendar3 className="text-red-500" size={16}/></div>
                     <div>
@@ -704,10 +731,10 @@ const Calendar = () => {
                 </div>
                 <div className="mb-8">
                    <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest mb-3">Description</p>
-                   <div className="bg-slate-50/50 p-5 rounded-2xl"><ExpandableDescription text={selectedEvent.description} /></div>
+                   <div className="bg-slate-50/50 p-4 md:p-5 rounded-2xl text-sm leading-relaxed"><ExpandableDescription text={selectedEvent.description} /></div>
                 </div>
                 <div className="pt-6 border-t border-slate-100 flex items-center gap-4">
-                  <div className="bg-indigo-50 p-3 rounded-2xl"><BsPeopleFill size={22} className="text-[#4d55d9]"/></div>
+                  <div className="bg-indigo-50 p-3 rounded-2xl shrink-0"><BsPeopleFill size={22} className="text-[#4d55d9]"/></div>
                   <div>
                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Target Group</p>
                     <p className="text-xs font-bold text-slate-700">{selectedEvent.target}</p>
