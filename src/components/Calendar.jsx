@@ -537,7 +537,7 @@ const Calendar = () => {
               const isToday = date.toDateString() === today.toDateString();
               return (
                 <div key={`date-${i}`} className="p-1 md:p-3">
-                  <div className={`text-xs md:text-base font-black ${isToday ? "bg-red-600 text-white rounded-full w-6 h-6 md:w-9 md:h-9 flex items-center justify-center shadow-lg" : isCurrentMonth ? "text-white" : "text-white/50"}`}>{date.getDate()}</div>
+                  <div className={`text-xs md:text-base font-black ${isToday ? "bg-[#FFE066] text-black rounded-full w-6 h-6 md:w-9 md:h-9 flex items-center justify-center shadow-lg" : isCurrentMonth ? "text-white" : "text-white/50"}`}>{date.getDate()}</div>
                 </div>
               );
             })}
@@ -584,7 +584,7 @@ const Calendar = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6">
         <div className="mb-8 md:mb-12 text-center lg:text-left pt-4 md:pt-8 w-fit mx-auto lg:mx-0">
           <h1 className="text-3xl md:text-5xl font-black tracking-tighter mb-1 text-white leading-none">DSWD ACADEMY 2026</h1>
-          <p className="text-white font-bold tracking-[0.5em] md:tracking-[1.28em] text-[10px] md:text-md uppercase flex justify-between mr-[-0.5em] md:mr-[-1.28em]">Training Calendar</p>
+          <p className="text-white font-bold tracking-[0.5em] md:tracking-[1.28em] text-md md:text-md uppercase flex justify-between mr-[-0.5em] md:mr-[-1.28em]">Training Calendar</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 pb-20">
