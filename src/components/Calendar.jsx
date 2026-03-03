@@ -459,6 +459,28 @@ const fullMonths = [
   "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER",
 ];
 
+const cardVariants = {
+  hidden: { opacity: 0, x: 50 },
+  visible: (i) => ({
+    opacity: 1,
+    x: 0,
+    transition: {
+      delay: i * 0.1,
+      duration: 0.4,
+      ease: "easeOut"
+    }
+  }),
+  exit: (i) => ({
+    opacity: 0,
+    x: -50,
+    transition: {
+      delay: i * 0.05,
+      duration: 0.3,
+      ease: "easeIn"
+    }
+  })
+};
+
 const ExpandableDescription = ({ text }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const words = text.split(" ");
@@ -522,13 +544,16 @@ const Calendar = () => {
     const totalSlots = firstDay + daysArray.length;
     const numRows = Math.ceil(totalSlots / 7);
     const rows = [];
+    const hasEventsThisMonth = filteredEvents.length > 0;
+
     for (let r = 0; r < numRows; r++) {
       const weekStartOffset = r * 7;
       const weekStartDate = new Date(fixedYear, selectedMonth, weekStartOffset - firstDay + 1);
       const weekEndDate = new Date(fixedYear, selectedMonth, weekStartOffset - firstDay + 7);
       const eventsInWeek = filteredEvents.filter(e => e.startDate <= weekEndDate && e.endDate >= weekStartDate);
+      
       rows.push(
-        <div key={`row-${r}`} className="relative border-b border-white/20 min-h-[100px] md:min-h-[140px] flex flex-col bg-black/40">
+        <div key={`row-${r}`} className="relative border-b border-white/10 min-h-[100px] md:min-h-[140px] flex flex-col bg-white/5">
           <div className="grid grid-cols-7 relative z-10">
             {Array.from({ length: 7 }).map((_, i) => {
               const dayIdx = weekStartOffset + i - firstDay;
@@ -537,7 +562,7 @@ const Calendar = () => {
               const isToday = date.toDateString() === today.toDateString();
               return (
                 <div key={`date-${i}`} className="p-1 md:p-3">
-                  <div className={`text-xs md:text-base font-black ${isToday ? "bg-[#FFE066] text-black rounded-full w-6 h-6 md:w-9 md:h-9 flex items-center justify-center shadow-lg" : isCurrentMonth ? "text-white" : "text-white/50"}`}>{date.getDate()}</div>
+                  <div className={`text-xs md:text-base font-black ${isToday ? "bg-[#FFE066] text-black rounded-full w-6 h-6 md:w-9 md:h-9 flex items-center justify-center shadow-lg" : isCurrentMonth ? "text-white" : "text-white/30"}`}>{date.getDate()}</div>
                 </div>
               );
             })}
@@ -551,9 +576,16 @@ const Calendar = () => {
               return (
                 <div key={`${event.id}-${r}`} className="grid grid-cols-7 w-full px-0.5">
                   <motion.div 
+                    initial={{ opacity: 0, scaleX: 0 }}
+                    animate={{ opacity: 1, scaleX: 1 }}
+                    transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.2 }}
+                    style={{ 
+                      gridColumn: `${startCol} / span ${duration}`, 
+                      backgroundColor: THEME_RED,
+                      transformOrigin: "left" 
+                    }} 
                     whileHover={{ scale: 1.02, filter: "brightness(1.2)" }} 
                     className="text-white text-[9px] md:text-[11px] h-5 md:h-7 flex items-center px-1 md:px-3 cursor-pointer truncate font-black rounded md:rounded-lg border border-white/10 shadow-md" 
-                    style={{ gridColumn: `${startCol} / span ${duration}`, backgroundColor: THEME_RED }} 
                     onClick={() => setSelectedEvent(event)}
                   >
                     {(event.startDate >= weekStartDate || eventStart.getDay() === 0) && event.title}
@@ -565,7 +597,23 @@ const Calendar = () => {
         </div>
       );
     }
-    return rows;
+
+    return (
+      <div className="relative">
+        {rows}
+        {!hasEventsThisMonth && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+            <motion.span 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-white/20 font-black text-2xl md:text-5xl uppercase tracking-[0.3em] text-center px-4"
+            >
+              To Be Announced
+            </motion.span>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -575,30 +623,36 @@ const Calendar = () => {
         ::-webkit-scrollbar-track { background: #1a1a1a; }
         ::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #ee1c25, #9e1117); border-radius: 20px; border: 2px solid #1a1a1a; }
         ::-webkit-scrollbar-thumb:hover { background: #ff2b35; }
-        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px) saturate(200%); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 15px 35px 0 rgba(0, 0, 0, 0.4); }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px) saturate(150%); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.2); }
         .custom-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1.25rem center; background-size: 1rem; appearance: none; }
       `}</style>
 
       <div className="fixed inset-0 z-0" style={{ backgroundImage: `linear-gradient(to bottom, rgba(46, 49, 146, 0.8), rgba(20, 20, 20, 0.95)), url(${DABuilding})`, backgroundSize: "cover", backgroundPosition: "center" }} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6">
-        <div className="mb-8 md:mb-12 text-center lg:text-left pt-4 md:pt-8 w-fit mx-auto lg:mx-0">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          className="mb-8 md:mb-12 text-center lg:text-left pt-4 md:pt-8 w-fit mx-auto lg:mx-0"
+        >
           <h1 className="text-3xl md:text-5xl font-black tracking-tighter mb-1 text-white leading-none">DSWD ACADEMY 2026</h1>
           <p className="text-white font-bold tracking-[0.5em] md:tracking-[1.28em] text-md md:text-md uppercase flex justify-between mr-[-0.5em] md:mr-[-1.28em]">Training Calendar</p>
-        </div>
+        </motion.div>
 
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 pb-20">
-          <aside className="w-full lg:w-72 shrink-0 space-y-6">
+          <motion.aside 
+            initial={{ opacity: 0, x: -30 }} 
+            animate={{ opacity: 1, x: 0 }} 
+            className="w-full lg:w-72 shrink-0 space-y-6"
+          >
             <div className="glass-card p-2 rounded-2xl flex">
               <button onClick={() => setView("calendar")} className={`flex-1 py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-black transition-all ${view === "calendar" ? "bg-white text-[#4d55d9] shadow-xl" : "text-white hover:bg-white/10"}`}><BsCalendar3/> Calendar</button>
               <button onClick={() => setView("list")} className={`flex-1 py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-black transition-all ${view === "list" ? "bg-white text-[#4d55d9] shadow-xl" : "text-white hover:bg-white/10"}`}><BsListUl/> List</button>
             </div>
             
-            {/* MONTHLY INDEX - MOBILE DROPDOWN / DESKTOP LIST */}
             <div className="glass-card rounded-3xl p-5">
               <p className="text-white font-black uppercase tracking-widest text-[10px] mb-3 md:mb-5 ml-2">Monthly Index</p>
               
-              {/* Mobile Select */}
               <div className="block lg:hidden">
                 <select 
                   className="custom-select w-full bg-white/10 border border-white/20 rounded-xl py-3 px-5 text-sm font-black text-white focus:outline-none"
@@ -611,93 +665,124 @@ const Calendar = () => {
                 </select>
               </div>
 
-              {/* Desktop List */}
               <div className="hidden lg:block space-y-1.5">
                 {fullMonths.map((name, index) => (
-                  <button key={name} onClick={() => setSelectedMonth(index)} className={`w-full py-3 px-5 rounded-xl text-xs font-black text-left transition-all ${selectedMonth === index ? "bg-[#FFE066] text-[#4d55d9] translate-x-2" : "text-white/80 hover:bg-white/10"}`}>
+                  <motion.button 
+                    key={name} 
+                    onClick={() => setSelectedMonth(index)} 
+                    whileHover={{ scale: 1.05, x: 8 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                    className={`w-full py-3 px-5 rounded-xl text-xs font-black text-left transition-colors ${selectedMonth === index ? "bg-[#FFE066] text-[#4d55d9] shadow-lg" : "text-white/80 hover:bg-white/10"}`}
+                  >
                     <span className="opacity-50 mr-3">{(index + 1).toString().padStart(2, '0')}</span>{name}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </div>
-          </aside>
+          </motion.aside>
 
-          <main className="flex-1 min-w-0">
-            {view === "calendar" ? (
-              <div className="space-y-6">
-                <div className="flex justify-between items-end px-2 md:px-4">
-                   <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase">{fullMonths[selectedMonth]}</h2>
-                   <span className="text-white/40 font-black text-xl md:text-3xl">2026</span>
-                </div>
-                <div className="grid grid-cols-7 text-center font-black text-white uppercase text-[9px] md:text-xs tracking-[0.1em] md:tracking-[0.3em] pb-3">
-                  {weekdays.map(d => <div key={d}>{d}</div>)}
-                </div>
-                <div className="glass-card rounded-lg overflow-hidden shadow-2xl overflow-x-auto">
-                  <div className="min-w-[600px] md:min-w-full">
-                    {renderCalendarRows()}
+          <motion.main 
+            layout
+            className="flex-1 min-w-0"
+          >
+            <AnimatePresence mode="wait">
+              {view === "calendar" ? (
+                <motion.div 
+                  key={`calendar-${selectedMonth}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="space-y-6"
+                >
+                  <div className="flex justify-between items-end px-2 md:px-4">
+                     <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase">{fullMonths[selectedMonth]}</h2>
+                     <span className="text-white/40 font-black text-xl md:text-3xl">2026</span>
                   </div>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4 md:space-y-6">
-                <div className="px-2 md:px-4"><h2 className="text-2xl md:text-4xl font-black text-white tracking-tighter uppercase">{fullMonths[selectedMonth]} Catalog</h2></div>
-                <div className="glass-card rounded-3xl p-4 mb-4 flex flex-col md:flex-row gap-4">
-                  <div className="relative flex-1">
-                    <BsSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-white" size={16} />
-                    <input type="text" placeholder="Search title..." className="w-full bg-black/30 border border-white/20 rounded-xl py-2.5 pl-12 text-sm text-white focus:outline-none" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                  <div className="grid grid-cols-7 text-center font-black text-white uppercase text-[9px] md:text-xs tracking-[0.1em] md:tracking-[0.3em] pb-3">
+                    {weekdays.map(d => <div key={d}>{d}</div>)}
                   </div>
-                  <select className="custom-select bg-black/30 border border-white/20 rounded-xl py-2.5 px-6 text-sm font-black text-white focus:outline-none md:w-64" value={filterCategoryId} onChange={(e) => setFilterCategoryId(e.target.value)}>
-                    <option value="All">All Categories</option>
-                    {Object.entries(trainingCategories).map(([id, label]) => <option key={id} value={id} className="text-slate-900">{label}</option>)}
-                  </select>
-                </div>
+                  <div className="glass-card rounded-lg overflow-hidden shadow-2xl overflow-x-auto">
+                    <div className="min-w-[600px] md:min-w-full">
+                      {renderCalendarRows()}
+                    </div>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div 
+                  key={`list-${selectedMonth}-${currentPage}`} 
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  className="space-y-4 md:space-y-6"
+                >
+                  <div className="px-2 md:px-4"><h2 className="text-2xl md:text-4xl font-black text-white tracking-tighter uppercase">{fullMonths[selectedMonth]} Catalog</h2></div>
+                  <div className="glass-card rounded-3xl p-4 mb-4 flex flex-col md:flex-row gap-4">
+                    <div className="relative flex-1">
+                      <BsSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-white" size={16} />
+                      <input type="text" placeholder="Search title..." className="w-full bg-black/30 border border-white/20 rounded-xl py-2.5 pl-12 text-sm text-white focus:outline-none" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                    </div>
+                    <select className="custom-select bg-black/30 border border-white/20 rounded-xl py-2.5 px-6 text-sm font-black text-white focus:outline-none md:w-64" value={filterCategoryId} onChange={(e) => setFilterCategoryId(e.target.value)}>
+                      <option value="All">All Categories</option>
+                      {Object.entries(trainingCategories).map(([id, label]) => <option key={id} value={id} className="text-slate-900">{label}</option>)}
+                    </select>
+                  </div>
 
-                <div className="flex flex-col gap-4 md:gap-6">
-                  {currentEvents.length > 0 ? currentEvents.map(event => {
-                    const showTag = event.tag === "WITH CPD UNITS" || event.tag === "TRAINING OF TRAINERS";
-                    return (
-                      <motion.div 
-                        key={event.id} 
-                        onClick={() => setSelectedEvent(event)} 
-                        className="bg-white rounded-2xl p-6 md:p-5 flex flex-col md:flex-row gap-5 items-start md:items-center cursor-pointer hover:translate-y-[-2px] transition-all border-l-[8px] md:border-l-[6px] border-[#ee1c25] shadow-lg group"
-                      >
-                        <div className="flex-1 min-w-0 w-full">
-                          <div className="flex flex-wrap items-center gap-3 text-[10px] font-black text-slate-500 mb-2 md:mb-1 uppercase tracking-wider">
-                            <span className="flex items-center gap-1.5"><BsCalendar3 className="text-red-500"/> {formatDateRange(event.startDate, event.endDate)}</span>
-                            <span className="flex items-center gap-1.5 truncate max-w-full md:max-w-[200px]"><BsGeoAltFill className="text-red-500"/> {event.venue}</span>
-                          </div>
-                          <h3 className="text-[#4d55d9] font-black text-xl md:text-lg leading-tight group-hover:text-red-600 transition-colors md:truncate">{event.title}</h3>
-                          <p className="text-[10px] font-black text-[#4d55d9] opacity-70 uppercase mt-2 md:mt-1">{trainingCategories[event.colorId]}</p>
-                        </div>
-                        {showTag && (
-                          <span className="bg-[#ee1c25] text-white text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-widest whitespace-nowrap self-start md:self-center">
-                            {event.tag}
-                          </span>
-                        )}
-                      </motion.div>
-                    );
-                  }) : (
-                    <div className="py-20 text-center glass-card rounded-3xl text-white font-black text-xl tracking-widest uppercase">No Events Found</div>
+                  <div className="flex flex-col gap-4 md:gap-6 min-h-[400px]">
+                    <AnimatePresence mode="popLayout">
+                      {currentEvents.length > 0 ? currentEvents.map((event, index) => {
+                        const showTag = event.tag === "WITH CPD UNITS" || event.tag === "TRAINING OF TRAINERS";
+                        return (
+                          <motion.div 
+                            key={event.id}
+                            custom={index}
+                            variants={cardVariants}
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
+                            onClick={() => setSelectedEvent(event)} 
+                            className="bg-white rounded-2xl p-6 md:p-5 flex flex-col md:flex-row gap-5 items-start md:items-center cursor-pointer hover:shadow-2xl transition-all border-l-[8px] md:border-l-[6px] border-[#ee1c25] shadow-lg group"
+                          >
+                            <div className="flex-1 min-w-0 w-full">
+                              <div className="flex flex-wrap items-center gap-3 text-[10px] font-black text-slate-500 mb-2 md:mb-1 uppercase tracking-wider">
+                                <span className="flex items-center gap-1.5"><BsCalendar3 className="text-red-500"/> {formatDateRange(event.startDate, event.endDate)}</span>
+                                <span className="flex items-center gap-1.5 truncate max-w-full md:max-w-[200px]"><BsGeoAltFill className="text-red-500"/> {event.venue}</span>
+                              </div>
+                              <h3 className="text-[#4d55d9] font-black text-xl md:text-lg leading-tight group-hover:text-red-600 transition-colors md:truncate">{event.title}</h3>
+                              <p className="text-[10px] font-black text-[#4d55d9] opacity-70 uppercase mt-2 md:mt-1">{trainingCategories[event.colorId]}</p>
+                            </div>
+                            {showTag && (
+                              <span className="bg-[#ee1c25] text-white text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-widest whitespace-nowrap self-start md:self-center">
+                                {event.tag}
+                              </span>
+                            )}
+                          </motion.div>
+                        );
+                      }) : (
+                        <motion.div key="no-events" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-20 text-center glass-card rounded-3xl text-white font-black text-xl tracking-widest uppercase">No Events Found</motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {filteredEvents.length > itemsPerPage && (
+                    <div className="flex items-center justify-center gap-6 pt-6 md:pt-4 text-white font-black uppercase tracking-tighter text-sm">
+                      <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} className="flex items-center gap-2 hover:text-[#FFE066] disabled:opacity-30 disabled:hover:text-white transition-all"><BsChevronLeft strokeWidth={2}/> Prev</button>
+                      <span className="bg-white/10 px-4 py-1 rounded-full text-xs">{currentPage} <span className="opacity-40 mx-1">out of</span> {totalPages}</span>
+                      <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)} className="flex items-center gap-2 hover:text-[#FFE066] disabled:opacity-30 disabled:hover:text-white transition-all">Next <BsChevronRight strokeWidth={2}/></button>
+                    </div>
                   )}
-                </div>
-
-                {filteredEvents.length > itemsPerPage && (
-                  <div className="flex items-center justify-center gap-6 pt-6 md:pt-4 text-white font-black uppercase tracking-tighter text-sm">
-                    <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} className="flex items-center gap-2 hover:text-[#FFE066] disabled:opacity-30 disabled:hover:text-white transition-all"><BsChevronLeft strokeWidth={2}/> Prev</button>
-                    <span className="bg-white/10 px-4 py-1 rounded-full text-xs">{currentPage} <span className="opacity-40 mx-1">out of</span> {totalPages}</span>
-                    <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)} className="flex items-center gap-2 hover:text-[#FFE066] disabled:opacity-30 disabled:hover:text-white transition-all">Next <BsChevronRight strokeWidth={2}/></button>
-                  </div>
-                )}
-              </div>
-            )}
-          </main>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.main>
         </div>
       </div>
 
       <AnimatePresence>
         {selectedEvent && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[100] p-4" onClick={() => setSelectedEvent(null)}>
-            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} className="bg-white rounded-[2rem] md:rounded-[2.5rem] max-w-2xl w-full max-h-[95vh] md:max-h-[90vh] overflow-y-auto relative text-slate-900 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} transition={{ type: "spring", duration: 0.5 }} className="bg-white rounded-[2rem] md:rounded-[2.5rem] max-w-2xl w-full max-h-[95vh] md:max-h-[90vh] overflow-y-auto relative text-slate-900 shadow-2xl" onClick={e => e.stopPropagation()}>
               <div className="h-40 md:h-52 relative">
                 {selectedEvent.image && <img src={selectedEvent.image} className="w-full h-full object-cover rounded-t-[2rem] md:rounded-t-[2.5rem]" alt="" />}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
