@@ -1,11 +1,21 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BsPeopleFill } from "react-icons/bs";
+import { BsPeopleFill, BsSearch, BsCalendar3, BsListUl, BsGeoAltFill, BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { IoClose } from "react-icons/io5"; 
-import TABG from "../assets/TABG.png";
+import DABuilding from "../assets/DABuilding.jpeg";
 import News3 from "../assets/News3.png";
 
 const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+const trainingCategories = {
+  1: "Disaster Response Trainings",
+  2: "DSWD Academy Functionality Trainings",
+  3: "SDCA Functionality",
+  4: "Sectoral Development Programs Trainings",
+  5: "Social Welfare and Development Agencies Trainings",
+  6: "Training on Community-based Programs",
+  7: "Training on Family"
+};
 
 const exampleEvents = [
   {
@@ -18,7 +28,7 @@ const exampleEvents = [
     tag: "WITH CPD UNITS",
     target: "Local Social Welfare and Development Officers (LSWDOs)",
     image: News3,
-    colorId: 1,
+    colorId: 7,
   },
   {
     id: 2,
@@ -30,7 +40,7 @@ const exampleEvents = [
     tag: "WITH CPD UNITS",
     target: "Local Government Units",
     image: "",
-    colorId: 2,
+    colorId: 7,
   },
   {
     id: 3,
@@ -42,7 +52,7 @@ const exampleEvents = [
     tag: "TRAINING OF TRAINERS",
     target: "Field Offices, Provincial Social Welfare and Development Office (PSWDOs)",
     image: "",
-    colorId: 1,
+    colorId: 7,
   },
   {
     id: 4,
@@ -54,7 +64,7 @@ const exampleEvents = [
     tag: "WITH CPD UNITS",
     target: "Local Government Units",
     image: "",
-    colorId: 2,
+    colorId: 7,
   },
   {
     id: 5,
@@ -66,7 +76,7 @@ const exampleEvents = [
     tag: "PILOT",
     target: "Supervising Social Work, Houseparent, Teacher, Psychometrician, Psychologists",
     image: "",
-    colorId: 3,
+    colorId: 4,
   },
   {
     id: 6,
@@ -78,7 +88,7 @@ const exampleEvents = [
     tag: "TRAINING OF TRAINERS",
     target: "Supervising Houseparent, Nutritionist, Medical Personnel",
     image: "",
-    colorId: 3,
+    colorId: 2,
   },
   {
     id: 7,
@@ -90,7 +100,7 @@ const exampleEvents = [
     tag: "TRAINING OF TRAINERS",
     target: "Field Offices, Provincial Social Welfare and Development Office (PSWDOs)",
     image: "",
-    colorId: 1,
+    colorId: 7,
   },
   {
     id: 8,
@@ -102,7 +112,7 @@ const exampleEvents = [
     tag: "",
     target: "Cities, Municipalities",
     image: "",
-    colorId: 1,
+    colorId: 7,
   },
   {
     id: 9,
@@ -114,7 +124,7 @@ const exampleEvents = [
     tag: "",
     target: "GAD Focal Persons",
     image: "",
-    colorId: 2,
+    colorId: 4,
   },
   {
     id: 10,
@@ -126,7 +136,7 @@ const exampleEvents = [
     tag: "",
     target: "Cities, Municipalities",
     image: "",
-    colorId: 2,
+    colorId: 7,
   },
   {
     id: 11,
@@ -138,7 +148,7 @@ const exampleEvents = [
     tag: "",
     target: "Cities, Municipalities",
     image: "",
-    colorId: 1,
+    colorId: 7,
   },
   {
     id: 12,
@@ -150,7 +160,7 @@ const exampleEvents = [
     tag: "TRAINING OF TRAINERS",
     target: "Core Group of Specialists, Learning Management Team",
     image: "",
-    colorId: 1,
+    colorId: 2,
   },
   {
     id: 13,
@@ -174,7 +184,7 @@ const exampleEvents = [
     tag: "TRAINING OF TRAINERS",
     target: "Supervising Social Worker, Supervising Houseparent",
     image: "",
-    colorId: 3,
+    colorId: 4,
   },
   {
     id: 15,
@@ -198,7 +208,7 @@ const exampleEvents = [
     tag: "",
     target: "Cities, Municipalities",
     image: "",
-    colorId: 1,
+    colorId: 7,
   },
   {
     id: 17,
@@ -210,7 +220,7 @@ const exampleEvents = [
     tag: "",
     target: "4Ps Regional Program Coordinators, NPMO Division Chiefs, OICs and Technical Staff",
     image: "",
-    colorId: 5,
+    colorId: 4,
   },
   {
     id: 18,
@@ -222,7 +232,7 @@ const exampleEvents = [
     tag: "",
     target: "Social Worker, Psychometrician, Houseparent, MO",
     image: "",
-    colorId: 3,
+    colorId: 4,
   },
   {
     id: 19,
@@ -246,7 +256,7 @@ const exampleEvents = [
     tag: "",
     target: "Cities, Municipalities",
     image: "",
-    colorId: 1,
+    colorId: 7,
   },
   {
     id: 21,
@@ -258,7 +268,7 @@ const exampleEvents = [
     tag: "",
     target: "Center Head, Supervising Social Worker",
     image: "",
-    colorId: 3,
+    colorId: 2,
   },
   {
     id: 22,
@@ -270,7 +280,7 @@ const exampleEvents = [
     tag: "WITH CPD UNITS",
     target: "Local Social Welfare and Development Officers (LSWDOs)",
     image: "",
-    colorId: 2,
+    colorId: 7,
   },
   {
     id: 23,
@@ -282,7 +292,7 @@ const exampleEvents = [
     tag: "",
     target: "Cities, Municipalities",
     image: "",
-    colorId: 1,
+    colorId: 7,
   },
   {
     id: 24,
@@ -294,7 +304,7 @@ const exampleEvents = [
     tag: "TRAINING OF TRAINERS",
     target: "Center Head, Supervising Social Worker, Social Worker, Supervising Houseparent, Teacher, Psychometrician,Psychologists",
     image: "",
-    colorId: 3,
+    colorId: 2,
   },
   {
     id: 25,
@@ -306,7 +316,7 @@ const exampleEvents = [
     tag: "",
     target: "Cities, Municipalities",
     image: "",
-    colorId: 3,
+    colorId: 7,
   },
   {
     id: 27,
@@ -318,7 +328,7 @@ const exampleEvents = [
     tag: "",
     target: "Cities, Municipalities",
     image: "",
-    colorId: 1,
+    colorId: 7,
   },
   {
     id: 28,
@@ -330,7 +340,7 @@ const exampleEvents = [
     tag: "",
     target: "Cities, Municipalities",
     image: "",
-    colorId: 1,
+    colorId: 7,
   },
   {
     id: 29,
@@ -342,7 +352,7 @@ const exampleEvents = [
     tag: "WITH CPD UNITS",
     target: "Local Social Welfare and Development Officers (LSWDOs)",
     image: "",
-    colorId: 2,
+    colorId: 7,
   },
   {
     id: 30,
@@ -354,7 +364,7 @@ const exampleEvents = [
     tag: "WITH CPD UNITS",
     target: "Local Social Welfare and Development Officers (LSWDOs)",
     image: "",
-    colorId: 2,
+    colorId: 7,
   },
   {
     id: 31,
@@ -366,7 +376,7 @@ const exampleEvents = [
     tag: "",
     target: "Child, Youth, Women, Family, OP, Persons With Disabillities",
     image: "",
-    colorId: 3,
+    colorId: 4,
   },
   {
     id: 32,
@@ -378,7 +388,7 @@ const exampleEvents = [
     tag: "",
     target: "Center Head, Supervising Social Worker",
     image: "",
-    colorId: 3,
+    colorId: 2,
   },
   {
     id: 33,
@@ -390,7 +400,7 @@ const exampleEvents = [
     tag: "",
     target: "Cities, Municipalities",
     image: "",
-    colorId: 1,
+    colorId: 7,
   },
   {
     id: 34,
@@ -402,7 +412,7 @@ const exampleEvents = [
     tag: "",
     target: "Field Offices, Social Welfare and Developmental Agencies, and LGU-Managed Centers/Residential Care Facilities",
     image: "",
-    colorId: 2,
+    colorId: 5,
   },
   {
     id: 35,
@@ -414,22 +424,22 @@ const exampleEvents = [
     tag: "",
     target: "Cities, Municipalities",
     image: "",
-    colorId: 1,
+    colorId: 7,
   },
   {
-    id: 35,
+    id: 36,
     startDate: new Date(2026, 5, 29),
     endDate: new Date(2026, 6, 3),
     title: "Ladderized 1: Training on Leadership and Management for Local Social Welfare and Development Officers: Catalysts for Change",
-    description: "The Leadership Training for Local Social Welfare and Development Officers (LSWDOs) is designed to build the essential skills, knowledge, and mindset required for effective leadership in social welfare programs. This training equips LSWDOs to navigate policy changes, manage resources, lead teams, and respond to various community challenges. Through a focus on ethical leadership, accountability, emotional intelligence, decision-making, and problem-solving, the program enhances their  capacity to deliver impactful services. It also promotes stakeholder collaboration to ensure more efficient service delivery and greater community impact. By empowering LSWDOs to advocate for marginalized populations, promote social justice.  mentor future leaders, and design sustainable, inclusive programs, the training contributes to the long-term well-being and development of the communities they serve.",
+    description: "The Leadership Training for Local Social Welfare and Development Officers (LSWDOs) is designed to build the essential skills, knowledge, and mindset required for effective leadership in social welfare programs. This training equips LSWDOs to navigate policy changes, manage resources, lead teams, and respond to various community challenges. Through a focus on ethical leadership, accountability, emotional intelligence, decision-making, and problem-solving, the program enhances their capacity to deliver impactful services. It also promotes stakeholder collaboration to ensure more efficient service delivery and greater community impact. By empowering LSWDOs to advocate for marginalized populations, promote social justice.  mentor future leaders, and design sustainable, inclusive programs, the training contributes to the long-term well-being and development of the communities they serve.",
     venue: "Region IX, Region IV-A, Region V, Region VIII, and Region X",
     tag: "",
     target: "Local Social Welfare and Development Officers (LSWDOs) from LGUs (Level 1-2 Rating in the SDCA)",
     image: "",
-    colorId: 6,
+    colorId: 3,
   },
   {
-    id: 36,
+    id: 37,
     startDate: new Date(2026, 5, 29),
     endDate: new Date(2026, 6, 3),
     title: "Training on Pre-Marriage Counseling BATCH 5",
@@ -438,56 +448,27 @@ const exampleEvents = [
     tag: "WITH CPD UNITS",
     target: "Local Social Welfare and Development Officers (LSWDOs)",
     image: "",
-    colorId: 2,
+    colorId: 7,
   },
 ];
 
-const tagColors = {
-  "WITH CPD UNITS": "#EF474E",
-  "TRAINING OF TRAINERS": "#5658A6",
-  PILOT: "#FCF231",
-};
-
-const eventColors = {
-  1: "#B083FB",
-  2: "#FF69C7",
-  3: "#FF751F",
-  4: "#FFB2FA",
-  5: "#7DD955",
-  6: "#0097B2",
-};
-
-const monthCards = [
-  { title: "JAN" }, { title: "FEB" }, { title: "MAR" }, { title: "APR" },
-  { title: "MAY" }, { title: "JUN" }, { title: "JUL" }, { title: "AUG" },
-  { title: "SEP" }, { title: "OCT" }, { title: "NOV" }, { title: "DEC" },
-];
+const THEME_RED = "#ee1c25";
 
 const fullMonths = [
-  "JANUARY", "FEBRUARY", "MARCH", "APRIL",
-  "MAY", "JUNE", "JULY", "AUGUST",
-  "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER",
+  "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", 
+  "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER",
 ];
 
 const ExpandableDescription = ({ text }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const words = text.split(" ");
-  const isOverLimit = words.length > 30;
-
-  if (!isOverLimit) {
-    return <p className="text-gray-600 leading-relaxed text-base md:text-lg">{text}</p>;
-  }
-
-  const displayText = isExpanded ? text : words.slice(0, 30).join(" ") + "...";
-
+  const isOverLimit = words.length > 20;
+  if (!isOverLimit) return <p className="text-gray-600 text-sm leading-relaxed">{text}</p>;
+  const displayText = isExpanded ? text : words.slice(0, 20).join(" ") + "...";
   return (
-    <div className="text-gray-600 leading-relaxed text-base md:text-lg">
-      <p>
-        {displayText}
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="ml-2 text-[#2e3192] font-bold hover:underline underline-offset-4"
-        >
+    <div className="text-gray-600 text-sm leading-relaxed">
+      <p>{displayText}
+        <button onClick={() => setIsExpanded(!isExpanded)} className="ml-2 text-[#4d55d9] font-black hover:underline focus:outline-none">
           {isExpanded ? "See Less" : "See More"}
         </button>
       </p>
@@ -500,96 +481,82 @@ const Calendar = () => {
   const fixedYear = 2026;
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
   const [selectedEvent, setSelectedEvent] = useState(null);
-
-  const scrollContainerRef = useRef(null);
-  const monthRefs = useRef([]);
+  const [view, setView] = useState("calendar"); 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterCategoryId, setFilterCategoryId] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
-    if (monthRefs.current[selectedMonth] && scrollContainerRef.current) {
-      const container = scrollContainerRef.current;
-      const target = monthRefs.current[selectedMonth];
-      const targetOffset = target.offsetLeft - (container.offsetWidth / 2) + (target.offsetWidth / 2);
-      container.scrollTo({ left: targetOffset, behavior: "smooth" });
-    }
+    const handleKeyDown = (e) => { if (e.key === "Escape") setSelectedEvent(null); };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => { setCurrentPage(1); }, [searchQuery, filterCategoryId, selectedMonth]);
+
+  const filteredEvents = useMemo(() => {
+    return exampleEvents.filter(event => {
+      const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = filterCategoryId === "All" || event.id === parseInt(filterCategoryId);
+      const matchesMonth = event.startDate.getMonth() === selectedMonth || event.endDate.getMonth() === selectedMonth;
+      return matchesSearch && matchesCategory && matchesMonth;
+    });
+  }, [searchQuery, filterCategoryId, selectedMonth]);
+
+  const totalPages = Math.ceil(filteredEvents.length / itemsPerPage);
+  const currentEvents = filteredEvents.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const formatDateRange = (start, end) => {
+    return `${start.getDate()}-${end.getDate()} ${start.toLocaleString("en-US", { month: "short" })} ${start.getFullYear()}`;
+  };
+
+  const { firstDay, daysArray } = useMemo(() => {
+    const fd = new Date(fixedYear, selectedMonth, 1).getDay();
+    const dCount = new Date(fixedYear, selectedMonth + 1, 0).getDate();
+    const dArray = Array.from({ length: dCount }, (_, i) => new Date(fixedYear, selectedMonth, i + 1));
+    return { firstDay: fd, daysArray: dArray };
   }, [selectedMonth]);
-
-  const formatDate = (date) => {
-    const day = date.getDate();
-    const month = date.toLocaleString("en-US", { month: "short" });
-    const year = date.getFullYear();
-    return `${day} ${month}, ${year}`;
-  };
-
-  const getDaysInMonth = (year, month) => {
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const daysArray = Array.from({ length: daysInMonth }, (_, i) => new Date(year, month, i + 1));
-    return { firstDay, daysArray };
-  };
-
-  const { firstDay, daysArray } = getDaysInMonth(fixedYear, selectedMonth);
 
   const renderCalendarRows = () => {
     const totalSlots = firstDay + daysArray.length;
     const numRows = Math.ceil(totalSlots / 7);
     const rows = [];
-
     for (let r = 0; r < numRows; r++) {
       const weekStartOffset = r * 7;
       const weekStartDate = new Date(fixedYear, selectedMonth, weekStartOffset - firstDay + 1);
       const weekEndDate = new Date(fixedYear, selectedMonth, weekStartOffset - firstDay + 7);
-
-      const eventsInWeek = exampleEvents.filter(e => e.startDate <= weekEndDate && e.endDate >= weekStartDate);
-      const sortedEvents = [...eventsInWeek].sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
-
+      const eventsInWeek = filteredEvents.filter(e => e.startDate <= weekEndDate && e.endDate >= weekStartDate);
       rows.push(
-        // min-h-[120px] -> min-h-30
-        <div key={`row-${r}`} className="relative border-b border-gray-200 min-h-30 flex flex-col">
-          <div className="absolute inset-0 grid grid-cols-7 pointer-events-none">
-            {Array.from({ length: 7 }).map((_, i) => (
-              <div key={`bg-${i}`} className="border-r border-gray-200 last:border-r-0 h-full" />
-            ))}
-          </div>
+        <div key={`row-${r}`} className="relative border-b border-white/20 min-h-[140px] flex flex-col bg-black/40">
           <div className="grid grid-cols-7 relative z-10">
             {Array.from({ length: 7 }).map((_, i) => {
               const dayIdx = weekStartOffset + i - firstDay;
               const date = new Date(fixedYear, selectedMonth, dayIdx + 1);
               const isCurrentMonth = date.getMonth() === selectedMonth;
               const isToday = date.toDateString() === today.toDateString();
-
               return (
-                <div key={`date-${i}`} className="p-2 h-10">
-                  <div className={`font-semibold text-xs md:text-sm 
-                    ${isToday ? "bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center" : ""}
-                    ${!isToday && isCurrentMonth ? "text-gray-700" : ""}
-                    ${!isCurrentMonth ? "text-gray-600 opacity-70 font-bold" : "opacity-100"}`}
-                  >
-                    {date.getDate()}
-                  </div>
+                <div key={`date-${i}`} className="p-3">
+                  <div className={`text-base font-black ${isToday ? "bg-red-600 text-white rounded-full w-9 h-9 flex items-center justify-center shadow-lg" : isCurrentMonth ? "text-white" : "text-white/50"}`}>{date.getDate()}</div>
                 </div>
               );
             })}
           </div>
-          <div className="relative z-20 pb-2 px-0.5 flex flex-col gap-y-1">
-            {sortedEvents.map((event) => {
+          <div className="relative z-20 pb-3 px-2 space-y-1.5">
+            {eventsInWeek.map((event) => {
               const eventStart = event.startDate < weekStartDate ? weekStartDate : event.startDate;
               const eventEnd = event.endDate > weekEndDate ? weekEndDate : event.endDate;
               const startCol = (eventStart.getDay() % 7) + 1;
               const duration = Math.round((eventEnd - eventStart) / (1000 * 60 * 60 * 24)) + 1;
-              const showTitle = event.startDate >= weekStartDate || eventStart.getDay() === 0;
               return (
-                <div key={`${event.id}-${r}`} className="grid grid-cols-7 w-full">
-                  <motion.div
-                    className="text-white text-[10px] md:text-xs h-6 flex items-center px-2 cursor-pointer shadow-sm truncate font-medium"
-                    style={{
-                      gridColumn: `${startCol} / span ${duration}`,
-                      backgroundColor: eventColors[event.colorId] || "#2e3192",
-                      borderRadius: "4px",
-                    }}
+                <div key={`${event.id}-${r}`} className="grid grid-cols-7 w-full px-0.5">
+                  <motion.div 
+                    whileHover={{ scale: 1.02, filter: "brightness(1.2)" }} 
+                    className="text-white text-[11px] h-7 flex items-center px-3 cursor-pointer truncate font-black rounded-lg border border-white/10 shadow-md" 
+                    style={{ gridColumn: `${startCol} / span ${duration}`, backgroundColor: THEME_RED }} 
                     onClick={() => setSelectedEvent(event)}
-                    whileHover={{ filter: "brightness(1.1)", scaleY: 1.1, zIndex: 30 }}
                   >
-                    {showTitle && <span className="truncate">{event.title}</span>}
+                    {(event.startDate >= weekStartDate || eventStart.getDay() === 0) && event.title}
                   </motion.div>
                 </div>
               );
@@ -602,139 +569,149 @@ const Calendar = () => {
   };
 
   return (
-    <div className="pt-24 font-sans relative select-none bg-transparent">
+    <div className="pt-16 font-sans relative min-h-screen text-slate-100 overflow-x-hidden">
       <style>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .month-card { backface-visibility: hidden; transform: translateZ(0); -webkit-font-smoothing: subpixel-antialiased; will-change: transform; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #ee1c25, #9e1117); border-radius: 20px; border: 2px solid #1a1a1a; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff2b35; }
+        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px) saturate(200%); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 15px 35px 0 rgba(0, 0, 0, 0.4); }
+        .custom-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1.25rem center; background-size: 1rem; appearance: none; }
       `}</style>
 
-      <div
-        className="absolute top-0 left-0 right-0 z-0 md:hidden"
-        style={{
-          height: "370px",
-          backgroundImage: `url(${TABG})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          borderBottomLeftRadius: "3rem",
-          borderBottomRightRadius: "3rem",
-        }}
-      />
-      <div
-        className="absolute top-0 left-0 right-0 z-0 hidden md:block"
-        style={{
-          height: "385px",
-          backgroundImage: `url(${TABG})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          borderBottomLeftRadius: "5rem",
-          borderBottomRightRadius: "5rem",
-        }}
-      />
+      <div className="fixed inset-0 z-0" style={{ backgroundImage: `linear-gradient(to bottom, rgba(46, 49, 146, 0.8), rgba(20, 20, 20, 0.95)), url(${DABuilding})`, backgroundSize: "cover", backgroundPosition: "center" }} />
 
-      <div className="relative z-10 w-full text-center mb-12">
-        {/* leading-[1] -> leading-none */}
-        <h1 className="text-4xl md:text-7xl font-bold text-[#2e3192] leading-none">2026</h1>
-        <h1 className="text-4xl md:text-7xl font-bold text-[#2e3192] mt-2">TRAINING CALENDAR</h1>
+      <div className="relative z-10 max-w-7xl mx-auto px-6">
+        <div className="mb-12 text-center lg:text-left pt-8 w-fit mx-auto lg:mx-0">
+          <h1 className="text-5xl font-black tracking-tighter mb-1 text-white leading-none">DSWD ACADEMY 2026</h1>
+          <p className="text-white font-bold tracking-[1.28em] text-md uppercase flex justify-between mr-[-1.28em]">Training Calendar</p>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-10 pb-20">
+          <aside className="w-full lg:w-72 shrink-0 space-y-6">
+            <div className="glass-card p-2 rounded-2xl flex">
+              <button onClick={() => setView("calendar")} className={`flex-1 py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-black transition-all ${view === "calendar" ? "bg-white text-[#4d55d9] shadow-xl" : "text-white hover:bg-white/10"}`}><BsCalendar3/> Calendar</button>
+              <button onClick={() => setView("list")} className={`flex-1 py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-black transition-all ${view === "list" ? "bg-white text-[#4d55d9] shadow-xl" : "text-white hover:bg-white/10"}`}><BsListUl/> List</button>
+            </div>
+            <div className="glass-card rounded-3xl p-5">
+              <p className="text-white font-black uppercase tracking-widest text-[10px] mb-5 ml-2">Monthly Index</p>
+              <div className="space-y-1.5">
+                {fullMonths.map((name, index) => (
+                  <button key={name} onClick={() => setSelectedMonth(index)} className={`w-full py-3 px-5 rounded-xl text-xs font-black text-left transition-all ${selectedMonth === index ? "bg-[#FFE066] text-[#4d55d9] translate-x-2" : "text-white/80 hover:bg-white/10"}`}>
+                    <span className="opacity-50 mr-3">{(index + 1).toString().padStart(2, '0')}</span>{name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </aside>
+
+          <main className="flex-1 min-w-0">
+            {view === "calendar" ? (
+              <div className="space-y-6">
+                <div className="flex justify-between items-end px-4">
+                   <h2 className="text-5xl font-black text-white tracking-tighter uppercase">{fullMonths[selectedMonth]}</h2>
+                   <span className="text-white/40 font-black text-3xl">2026</span>
+                </div>
+                <div className="grid grid-cols-7 text-center font-black text-white uppercase text-xs tracking-[0.3em] pb-3">
+                  {weekdays.map(d => <div key={d}>{d}</div>)}
+                </div>
+                <div className="glass-card rounded-lg overflow-hidden shadow-2xl">{renderCalendarRows()}</div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="px-4"><h2 className="text-4xl font-black text-white tracking-tighter uppercase">{fullMonths[selectedMonth]} Catalog</h2></div>
+                <div className="glass-card rounded-3xl p-4 mb-4 flex flex-col md:flex-row gap-4">
+                  <div className="relative flex-1">
+                    <BsSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-white" size={16} />
+                    <input type="text" placeholder="Search title..." className="w-full bg-black/30 border border-white/20 rounded-xl py-2.5 pl-12 text-sm text-white focus:outline-none" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                  </div>
+                  <select className="custom-select bg-black/30 border border-white/20 rounded-xl py-2.5 px-6 text-sm font-black text-white focus:outline-none md:w-64" value={filterCategoryId} onChange={(e) => setFilterCategoryId(e.target.value)}>
+                    <option value="All">All Categories</option>
+                    {Object.entries(trainingCategories).map(([id, label]) => <option key={id} value={id}>{label}</option>)}
+                  </select>
+                </div>
+
+                {currentEvents.length > 0 ? currentEvents.map(event => {
+                  const showTag = event.tag === "WITH CPD UNITS" || event.tag === "TRAINING OF TRAINERS";
+                  return (
+                    <motion.div key={event.id} onClick={() => setSelectedEvent(event)} className="bg-white rounded-2xl p-4 flex flex-col md:flex-row gap-5 items-center cursor-pointer hover:translate-y-[-2px] transition-all border-l-[6px] border-[#ee1c25] shadow-lg group">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-3 text-[10px] font-black text-slate-500 mb-1 uppercase tracking-wider">
+                          <span className="flex items-center gap-1.5"><BsCalendar3 className="text-red-500"/> {formatDateRange(event.startDate, event.endDate)}</span>
+                          <span className="flex items-center gap-1.5 truncate max-w-[200px]"><BsGeoAltFill className="text-red-500"/> {event.venue}</span>
+                        </div>
+                        <h3 className="text-[#4d55d9] font-black text-lg leading-tight group-hover:text-red-600 transition-colors truncate">{event.title}</h3>
+                        <p className="text-[10px] font-black text-[#4d55d9] opacity-70 uppercase mt-1">{trainingCategories[event.id]}</p>
+                      </div>
+                      {showTag && (
+                        <span className="bg-[#ee1c25] text-white text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-widest whitespace-nowrap">
+                          {event.tag}
+                        </span>
+                      )}
+                    </motion.div>
+                  );
+                }) : (
+                  <div className="py-20 text-center glass-card rounded-3xl text-white font-black text-xl tracking-widest uppercase">No Events Found</div>
+                )}
+
+                {filteredEvents.length > itemsPerPage && (
+                  <div className="flex items-center justify-center gap-6 pt-4 text-white font-black uppercase tracking-tighter text-sm">
+                    <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} className="flex items-center gap-2 hover:text-[#FFE066] disabled:opacity-30 disabled:hover:text-white transition-all"><BsChevronLeft strokeWidth={2}/> Prev</button>
+                    <span className="bg-white/10 px-4 py-1 rounded-full text-xs">{currentPage} <span className="opacity-40 mx-1">out of</span> {totalPages}</span>
+                    <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)} className="flex items-center gap-2 hover:text-[#FFE066] disabled:opacity-30 disabled:hover:text-white transition-all">Next <BsChevronRight strokeWidth={2}/></button>
+                  </div>
+                )}
+              </div>
+            )}
+          </main>
+        </div>
       </div>
-
-      <section className="relative z-10 w-full px-4 mb-8">
-        {/* max-w-[100rem] -> max-w-400 */}
-        <div className="bg-[#2e3192]/95 backdrop-blur-sm rounded-[2.5rem] w-full max-w-400 mx-auto p-4 md:p-6 shadow-2xl overflow-hidden">
-          <div ref={scrollContainerRef} className="flex overflow-x-auto no-scrollbar items-center gap-4 p-4 scroll-smooth">
-            {monthCards.map((card, index) => {
-              const isActive = selectedMonth === index;
-              return (
-                <motion.div
-                  key={card.title}
-                  ref={(el) => (monthRefs.current[index] = el)}
-                  onClick={() => setSelectedMonth(index)}
-                  initial={false}
-                  animate={{ scale: isActive ? 1.05 : 1, backgroundColor: isActive ? "#FFE066" : "#FFFFFF" }}
-                  transition={{ type: "tween", duration: 0.2 }}
-                  whileHover={{ scale: isActive ? 1.05 : 1.02 }}
-                  // flex-shrink-0 -> shrink-0
-                  className={`month-card shrink-0 flex items-center justify-center rounded-2xl py-8 cursor-pointer w-[40%] md:w-[15.5%] shadow-md transition-shadow duration-300 ${isActive ? "shadow-lg" : ""}`}
-                >
-                  <h3 className="font-black text-2xl md:text-4xl text-[#2e3192] tracking-tighter">{card.title}</h3>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <div className="text-center mt-8 relative z-10">
-        <h2 className="text-4xl font-black text-[#2e3192] tracking-tight">{fullMonths[selectedMonth]} {fixedYear}</h2>
-      </div>
-
-      {/* max-w-[100rem] -> max-w-400 */}
-      <section className="relative z-10 mt-6 max-w-400 mx-auto mb-20 px-4">
-        <div className="grid grid-cols-7 text-center font-bold text-gray-400 mb-2 uppercase text-sm tracking-widest">
-          {weekdays.map((day) => <div key={day} className="py-2">{day}</div>)}
-        </div>
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-          {renderCalendarRows()}
-        </div>
-      </section>
 
       <AnimatePresence>
         {selectedEvent && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4" onClick={() => setSelectedEvent(null)}>
-            <motion.div 
-              initial={{ scale: 0.9, y: 50, opacity: 0 }} 
-              animate={{ scale: 1, y: 0, opacity: 1 }} 
-              exit={{ scale: 0.9, y: 50, opacity: 0 }} 
-              className="rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto relative bg-white no-scrollbar flex flex-col" 
-              style={{ 
-                boxShadow: `0 25px 0px 0px ${eventColors[selectedEvent.colorId] || "#2e3192"}` 
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* flex-shrink-0 -> shrink-0 */}
-              <div className="w-full h-64 md:h-72 shrink-0 relative">
-                {selectedEvent.image && <img src={selectedEvent.image} alt={selectedEvent.title} className="w-full h-full object-cover" />}
-                <button onClick={() => setSelectedEvent(null)} className="absolute top-5 right-5 bg-white/90 text-black rounded-full w-10 h-10 flex items-center justify-center shadow-lg hover:bg-red-500 hover:text-white transition-all duration-200">
-                  <IoClose size={28} />
-                </button>
-              </div>
-
-              {/* flex-grow -> grow */}
-              <div className="p-8 grow">
-                <div className="flex flex-col gap-6">
-                  <div className="flex flex-wrap items-start justify-between gap-4 border-b border-gray-100 pb-6">
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center text-[#2e3192] font-bold text-sm md:text-base">
-                        <span className="bg-blue-50 px-4 py-2 rounded-lg">
-                          {formatDate(selectedEvent.startDate)} {selectedEvent.endDate > selectedEvent.startDate ? ` – ${formatDate(selectedEvent.endDate)}` : ""}
-                        </span>
-                      </div>
-                      <div className="flex items-center text-gray-600 font-medium">
-                        <span className="bg-gray-100 px-4 py-2 rounded-lg text-sm md:text-base">{selectedEvent.venue}</span>
-                      </div>
-                    </div>
-                    {selectedEvent.tag && (
-                      <span className="text-xs md:text-sm px-6 py-3 rounded-xl text-white font-black tracking-widest uppercase shadow-md" style={{ backgroundColor: tagColors[selectedEvent.tag] || "#2e3192" }}>
-                        {selectedEvent.tag}
-                      </span>
-                    )}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-[100] p-4" onClick={() => setSelectedEvent(null)}>
+            <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} className="bg-white rounded-[2.5rem] max-w-2xl w-full max-h-[90vh] overflow-y-auto relative text-slate-900 shadow-2xl" onClick={e => e.stopPropagation()}>
+              <div className="h-52 relative">
+                {selectedEvent.image && <img src={selectedEvent.image} className="w-full h-full object-cover rounded-t-[2.5rem]" alt="" />}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <button onClick={() => setSelectedEvent(null)} className="absolute top-5 right-5 bg-white/20 backdrop-blur-md text-white rounded-full p-2 hover:bg-red-600 transition-all"><IoClose size={24} /></button>
+                {(selectedEvent.tag === "WITH CPD UNITS" || selectedEvent.tag === "TRAINING OF TRAINERS") && (
+                  <div className="absolute bottom-4 left-6">
+                    <span className="bg-[#ee1c25] text-white text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-lg">
+                      {selectedEvent.tag}
+                    </span>
                   </div>
-                  <h2 className="text-3xl font-black text-gray-900 leading-tight">{selectedEvent.title}</h2>
-                  
-                  {selectedEvent.description && (
-                    <ExpandableDescription text={selectedEvent.description} />
-                  )}
-                </div>
+                )}
               </div>
-
-              <div className="bg-gray-50 p-8 border-t border-gray-100 mt-auto">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mb-3 block">Target Participants</span>
-                <div className="flex items-start gap-3">
-                  {/* flex-shrink-0 -> shrink-0 */}
-                  <BsPeopleFill className="text-[#2e3192] shrink-0 mt-1" size={24} />
-                  <p className="text-[#2e3192] font-bold text-base md:text-lg leading-snug">{selectedEvent.target}</p>
+              <div className="px-10 py-8">
+                <span className="text-[#4d55d9] font-black text-[10px] tracking-[0.2em] uppercase mb-2 block opacity-70">{trainingCategories[selectedEvent.id]}</span>
+                <h2 className="text-2xl font-black mb-6 leading-tight text-slate-900">{selectedEvent.title}</h2>
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center gap-4">
+                    <div className="bg-red-50 p-2.5 rounded-xl"><BsCalendar3 className="text-red-500" size={16}/></div>
+                    <div>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Schedule</p>
+                      <p className="text-xs font-bold text-slate-800">{formatDateRange(selectedEvent.startDate, selectedEvent.endDate)}</p>
+                    </div>
+                  </div>
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center gap-4">
+                    <div className="bg-blue-50 p-2.5 rounded-xl"><BsGeoAltFill className="text-[#4d55d9]" size={16}/></div>
+                    <div className="min-w-0">
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Venue</p>
+                      <p className="text-xs font-bold text-slate-800 truncate">{selectedEvent.venue}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="mb-8">
+                   <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest mb-3">Description</p>
+                   <div className="bg-slate-50/50 p-5 rounded-2xl"><ExpandableDescription text={selectedEvent.description} /></div>
+                </div>
+                <div className="pt-6 border-t border-slate-100 flex items-center gap-4">
+                  <div className="bg-indigo-50 p-3 rounded-2xl"><BsPeopleFill size={22} className="text-[#4d55d9]"/></div>
+                  <div>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Target Group</p>
+                    <p className="text-xs font-bold text-slate-700">{selectedEvent.target}</p>
+                  </div>
                 </div>
               </div>
             </motion.div>
