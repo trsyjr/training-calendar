@@ -10,10 +10,11 @@ import ToT from "../assets/ToT.png";
 import Pilot from "../assets/Pilot.JPG";
 import Rollout from "../assets/Rollout.png";
 import Fourps from "../assets/4ps.png";
-import Houseparenting from "../assets/Houseparenting.JPG";
+import Houseparenting from "../assets/Houseparenting.png";
 import Lad from "../assets/Lad.JPG";
 import Random from "../assets/Random.png";
 import Upskill from "../assets/Upskill.png";
+import PES from "../assets/PES.png";
 
 const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -61,7 +62,7 @@ const exampleEvents = [
     venue: "Baguio City (Cordillera Administrative Region)",
     tag: "TRAINING OF TRAINERS",
     target: "Field Offices, Provincial Social Welfare and Development Office (PSWDOs)",
-    image: ToT,
+    image: PES,
     colorId: 7,
   },
   {
@@ -86,7 +87,7 @@ const exampleEvents = [
     tag: "PILOT",
     target: "Supervising Social Work, Houseparent, Teacher, Psychometrician, Psychologists",
     image: Pilot,
-    colorId: 4,
+    colorId: 5,
   },
   {
     id: 6,
@@ -97,8 +98,8 @@ const exampleEvents = [
     venue: "MIMAROPA",
     tag: "TRAINING OF TRAINERS",
     target: "Supervising Houseparent, Nutritionist, Medical Personnel",
-    image: ToT,
-    colorId: 2,
+    image: Houseparenting,
+    colorId: 5,
   },
   {
     id: 7,
@@ -109,7 +110,7 @@ const exampleEvents = [
     venue: "National Capital Region",
     tag: "TRAINING OF TRAINERS",
     target: "Field Offices, Provincial Social Welfare and Development Office (PSWDOs)",
-    image: ToT,
+    image: PES,
     colorId: 7,
   },
   {
@@ -121,7 +122,7 @@ const exampleEvents = [
     venue: "Cordillera Administrative Region",
     tag: "",
     target: "Cities, Municipalities",
-    image: Rollout,
+    image: PES,
     colorId: 7,
   },
   {
@@ -145,7 +146,7 @@ const exampleEvents = [
     venue: "Cordillera Administrative Region",
     tag: "",
     target: "Cities, Municipalities",
-    image: Rollout,
+    image: PES,
     colorId: 7,
   },
   {
@@ -157,7 +158,7 @@ const exampleEvents = [
     venue: "Region I, Region III, Region IV-A, Region V, Region VI, and others.",
     tag: "",
     target: "Cities, Municipalities",
-    image: Rollout,
+    image: PES,
     colorId: 7,
   },
   {
@@ -181,7 +182,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "TRAINING OF TRAINERS",
     target: "Core Group of Specialists, Learning Management Team",
-    image: ToT,
+    image: PMC,
     colorId: 2,
   },
   {
@@ -194,7 +195,7 @@ const exampleEvents = [
     tag: "TRAINING OF TRAINERS",
     target: "Supervising Social Worker, Supervising Houseparent",
     image: ToT,
-    colorId: 4,
+    colorId: 5,
   },
   {
     id: 15,
@@ -205,7 +206,7 @@ const exampleEvents = [
     venue: "Cordillera Administrative Region",
     tag: "TRAINING OF TRAINERS",
     target: "Houseparent, Nutritionist, Medical Personnel",
-    image: ToT,
+    image: Houseparenting,
     colorId: 2,
   },
   {
@@ -217,7 +218,7 @@ const exampleEvents = [
     venue: "NCR, Region XII, Region III, Region V, Region VI, Region II, and others.",
     tag: "",
     target: "Cities, Municipalities",
-    image: Rollout,
+    image: PES,
     colorId: 7,
   },
   {
@@ -242,7 +243,7 @@ const exampleEvents = [
     tag: "",
     target: "Social Worker, Psychometrician, Houseparent, MO",
     image: Rollout,
-    colorId: 4,
+    colorId: 5,
   },
   {
     id: 19,
@@ -265,7 +266,7 @@ const exampleEvents = [
     venue: "Region VII, Region XI, Region II, Region IV-A, MIMAROPA, and others.",
     tag: "",
     target: "Cities, Municipalities",
-    image: Rollout,
+    image: PES,
     colorId: 7,
   },
   {
@@ -278,7 +279,7 @@ const exampleEvents = [
     tag: "",
     target: "Center Head, Supervising Social Worker",
     image: ToT,
-    colorId: 2,
+    colorId: 5,
   },
   {
     id: 22,
@@ -301,7 +302,7 @@ const exampleEvents = [
     venue: "Region III, Region IV-A, and CARAGA",
     tag: "",
     target: "Cities, Municipalities",
-    image: Rollout,
+    image: PES,
     colorId: 7,
   },
   {
@@ -314,7 +315,7 @@ const exampleEvents = [
     tag: "TRAINING OF TRAINERS",
     target: "Center Head, Supervising Social Worker, Social Worker, Supervising Houseparent, Teacher, Psychometrician,Psychologists",
     image: ToT,
-    colorId: 2,
+    colorId: 5,
   },
   {
     id: 25,
@@ -325,7 +326,7 @@ const exampleEvents = [
     venue: "Region I, Region VII, Region V, Region X, and MIMAROPA",
     tag: "",
     target: "Cities, Municipalities",
-    image: Rollout,
+    image: PES,
     colorId: 7,
   },
   {
@@ -337,7 +338,7 @@ const exampleEvents = [
     venue: "Region I, Region VII, Region V, Region X, and MIMAROPA",
     tag: "",
     target: "Cities, Municipalities",
-    image: Rollout,
+    image: PES,
     colorId: 7,
   },
   {
@@ -349,7 +350,7 @@ const exampleEvents = [
     venue: "Region VIII, Region XI, Region VI, Region IX, and others.",
     tag: "",
     target: "Cities, Municipalities",
-    image: Rollout,
+    image: PES,
     colorId: 7,
   },
   {
@@ -386,19 +387,19 @@ const exampleEvents = [
     tag: "",
     target: "Child, Youth, Women, Family, OP, Persons With Disabillities",
     image: Upskill,
-    colorId: 4,
+    colorId: 5,
   },
   {
     id: 32,
-    startDate: new Date(2026, 5, 1),
-    endDate: new Date(2026, 5, 5),
+    startDate: new Date(2026, 5, 8),
+    endDate: new Date(2026, 5, 11),
     title: "Upskilling on Strategic Communications",
     description: "This Upskilling Program on Strategic Communication is designed for CRCF Center Heads and Supervising Social Workers to strengthen their communication and leadership skills in managing teams and engaging stakeholders. It enhances their ability to deliver clear messages, handle difficult conversations, and manage conflict effectively, especially in sensitive and high-pressure situations. The program equips participants with practical strategies to promote collaboration, transparency, and effective service delivery within their centers.",
     venue: "CARAGA",
     tag: "",
     target: "Center Head, Supervising Social Worker",
     image: Upskill,
-    colorId: 2,
+    colorId: 5,
   },
   {
     id: 33,
@@ -409,7 +410,7 @@ const exampleEvents = [
     venue: "Region VIII, Region IX, Region XII, Region VI, and others.",
     tag: "",
     target: "Cities, Municipalities",
-    image: Rollout,
+    image: PES,
     colorId: 7,
   },
   {
@@ -433,7 +434,7 @@ const exampleEvents = [
     venue: "Region IX, Region IV-A, Region V, Region VIII, and Region X",
     tag: "",
     target: "Cities, Municipalities",
-    image: Rollout,
+    image: PES,
     colorId: 7,
   },
   {
@@ -470,7 +471,7 @@ const exampleEvents = [
     tag: "",
     target: "",
     image: Disaster,
-    colorId: 7,
+    colorId: 1,
   },
   {
     id: 39,
@@ -482,7 +483,7 @@ const exampleEvents = [
     tag: "",
     target: "",
     image: Disaster,
-    colorId: 7,
+    colorId: 1,
   },
   {
     id: 40,
@@ -530,7 +531,7 @@ const exampleEvents = [
     tag: "",
     target: "",
     image: ToT,
-    colorId: 7,
+    colorId: 4,
   },
   {
     id: 44,
@@ -554,7 +555,7 @@ const exampleEvents = [
     tag: "",
     target: "Level 1-2 Local Social Worker Officers",
     image: Lad,
-    colorId: 7,
+    colorId: 3,
   },
   {
     id: 46,
@@ -578,7 +579,7 @@ const exampleEvents = [
     tag: "",
     target: "",
     image: Random,
-    colorId: 7,
+    colorId: 6,
   },
   {
     id: 48,
@@ -590,7 +591,7 @@ const exampleEvents = [
     tag: "",
     target: "",
     image: Random,
-    colorId: 7,
+    colorId: 4,
   },
   {
     id: 49,
@@ -614,7 +615,7 @@ const exampleEvents = [
     tag: "",
     target: "",
     image: Random,
-    colorId: 7,
+    colorId: 6,
   },
   {
     id: 51,
@@ -626,7 +627,7 @@ const exampleEvents = [
     tag: "",
     target: "DSWD Academy (Taguig City, National Capital Region)",
     image: Disaster,
-    colorId: 7,
+    colorId: 1,
   },
   {
     id: 52,
@@ -662,7 +663,103 @@ const exampleEvents = [
     tag: "",
     target: "",
     image: Random,
-    colorId: 7,
+    colorId: 3,
+  },
+  {
+    id: 55,
+    startDate: new Date(2026, 5, 16),
+    endDate: new Date(2026, 5, 19),
+    title: "Rollout of training manual on Parenting  LGBTQ+ Residents in DSWD Centers and Residential Care Facilities: Creating a Safe, Affirming and Inclusive Environment",
+    description: "",
+    venue: "DSWD Academy (Taguig City, National Capital Region)",
+    tag: "",
+    target: "",
+    image: Random,
+    colorId: 5,
+  },
+  {
+    id: 56,
+    startDate: new Date(2026, 5, 16),
+    endDate: new Date(2026, 5, 19),
+    title: "Trauma Informed Care  for Houseparents (TOT)",
+    description: "",
+    venue: "DSWD Academy (Taguig City, National Capital Region)",
+    tag: "",
+    target: "",
+    image: Random,
+    colorId: 5,
+  },
+  {
+    id: 57,
+    startDate: new Date(2026, 5, 7),
+    endDate: new Date(2026, 5, 10),
+    title: "Trauma Informed Care for Houseparents (TOT)",
+    description: "",
+    venue: "DSWD Academy (Taguig City, National Capital Region)",
+    tag: "",
+    target: "",
+    image: Houseparenting,
+    colorId: 5,
+  },
+  {
+    id: 58,
+    startDate: new Date(2026, 6, 14),
+    endDate: new Date(2026, 6, 17),
+    title: "Life Skills Intervention Sessions for Older Children and Youth",
+    description: "",
+    venue: "DSWD Academy (Taguig City, National Capital Region)",
+    tag: "",
+    target: "",
+    image: Random,
+    colorId: 5,
+  },
+  {
+    id: 59,
+    startDate: new Date(2026, 7, 4),
+    endDate: new Date(2026, 7, 7),
+    title: "Basic Life Support Skills Sessions",
+    description: "",
+    venue: "DSWD Academy (Taguig City, National Capital Region)",
+    tag: "",
+    target: "",
+    image: Random,
+    colorId: 5,
+  },
+  {
+    id: 60,
+    startDate: new Date(2026, 8, 15),
+    endDate: new Date(2026, 8, 18),
+    title: "Upskilling on Houseparenting Standards for Houseparents",
+    description: "",
+    venue: "DSWD Academy (Taguig City, National Capital Region)",
+    tag: "",
+    target: "",
+    image: Houseparenting,
+    colorId: 5,
+  },
+  {
+    id: 61,
+    startDate: new Date(2026, 9, 12),
+    endDate: new Date(2026, 9, 16),
+    title: "Upskilling on Social Work Counseling: Counseling Competencies for Today’s Social Worker Batch 2",
+    description: "",
+    venue: "DSWD Academy (Taguig City, National Capital Region)",
+    tag: "",
+    target: "",
+    image: Upskill,
+    colorId: 5,
+  },
+  {
+    id: 62,
+    startDate: new Date(2026, 9, 19),
+    endDate: new Date(2026, 9, 23),
+    title: "Gender Responsive Case Management",
+    description: "",
+    venue: "DSWD Academy (Taguig City, National Capital Region)",
+    tag: "",
+    target: "",
+    image: Random,
+    colorId: 5,
   },
 ];
 
