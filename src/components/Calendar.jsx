@@ -4,6 +4,16 @@ import { BsPeopleFill, BsSearch, BsCalendar3, BsListUl, BsGeoAltFill, BsChevronL
 import { IoClose } from "react-icons/io5"; 
 import DABuilding from "../assets/DABuilding.jpeg";
 import News3 from "../assets/News3.png";
+import PMC from "../assets/PMC.JPG";
+import Disaster from "../assets/Disaster.jpg";
+import ToT from "../assets/ToT.png";
+import Pilot from "../assets/Pilot.JPG";
+import Rollout from "../assets/Rollout.png";
+import Fourps from "../assets/4ps.png";
+import Houseparenting from "../assets/Houseparenting.JPG";
+import Lad from "../assets/Lad.JPG";
+import Random from "../assets/Random.png";
+import Upskill from "../assets/Upskill.png";
 
 const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -27,7 +37,7 @@ const exampleEvents = [
     venue: "DSWD Academy Taguig (Taguig City, National Capital Region)",
     tag: "WITH CPD UNITS",
     target: "Local Social Welfare and Development Officers (LSWDOs)",
-    image: News3,
+    image: PMC,
     colorId: 7,
   },
   {
@@ -39,7 +49,7 @@ const exampleEvents = [
     venue: "Bataan (Central Luzon)",
     tag: "WITH CPD UNITS",
     target: "Local Government Units",
-    image: "",
+    image: PMC,
     colorId: 7,
   },
   {
@@ -51,7 +61,7 @@ const exampleEvents = [
     venue: "Baguio City (Cordillera Administrative Region)",
     tag: "TRAINING OF TRAINERS",
     target: "Field Offices, Provincial Social Welfare and Development Office (PSWDOs)",
-    image: "",
+    image: ToT,
     colorId: 7,
   },
   {
@@ -63,7 +73,7 @@ const exampleEvents = [
     venue: "Palompon (Eastern Visayas)",
     tag: "WITH CPD UNITS",
     target: "Local Government Units",
-    image: "",
+    image: PMC,
     colorId: 7,
   },
   {
@@ -75,7 +85,7 @@ const exampleEvents = [
     venue: "Region VI",
     tag: "PILOT",
     target: "Supervising Social Work, Houseparent, Teacher, Psychometrician, Psychologists",
-    image: "",
+    image: Pilot,
     colorId: 4,
   },
   {
@@ -87,7 +97,7 @@ const exampleEvents = [
     venue: "MIMAROPA",
     tag: "TRAINING OF TRAINERS",
     target: "Supervising Houseparent, Nutritionist, Medical Personnel",
-    image: "",
+    image: ToT,
     colorId: 2,
   },
   {
@@ -99,7 +109,7 @@ const exampleEvents = [
     venue: "National Capital Region",
     tag: "TRAINING OF TRAINERS",
     target: "Field Offices, Provincial Social Welfare and Development Office (PSWDOs)",
-    image: "",
+    image: ToT,
     colorId: 7,
   },
   {
@@ -111,7 +121,7 @@ const exampleEvents = [
     venue: "Cordillera Administrative Region",
     tag: "",
     target: "Cities, Municipalities",
-    image: "",
+    image: Rollout,
     colorId: 7,
   },
   {
@@ -123,7 +133,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "GAD Focal Persons",
-    image: "",
+    image: Random,
     colorId: 4,
   },
   {
@@ -135,7 +145,7 @@ const exampleEvents = [
     venue: "Cordillera Administrative Region",
     tag: "",
     target: "Cities, Municipalities",
-    image: "",
+    image: Rollout,
     colorId: 7,
   },
   {
@@ -147,7 +157,7 @@ const exampleEvents = [
     venue: "Region I, Region III, Region IV-A, Region V, Region VI, and others.",
     tag: "",
     target: "Cities, Municipalities",
-    image: "",
+    image: Rollout,
     colorId: 7,
   },
   {
@@ -159,7 +169,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "TRAINING OF TRAINERS",
     target: "Core Group of Specialists, Learning Management Team",
-    image: "",
+    image: Houseparenting,
     colorId: 2,
   },
   {
@@ -171,7 +181,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "TRAINING OF TRAINERS",
     target: "Core Group of Specialists, Learning Management Team",
-    image: "",
+    image: ToT,
     colorId: 2,
   },
   {
@@ -183,7 +193,7 @@ const exampleEvents = [
     venue: "Region I",
     tag: "TRAINING OF TRAINERS",
     target: "Supervising Social Worker, Supervising Houseparent",
-    image: "",
+    image: ToT,
     colorId: 4,
   },
   {
@@ -195,7 +205,7 @@ const exampleEvents = [
     venue: "Cordillera Administrative Region",
     tag: "TRAINING OF TRAINERS",
     target: "Houseparent, Nutritionist, Medical Personnel",
-    image: "",
+    image: ToT,
     colorId: 2,
   },
   {
@@ -207,7 +217,7 @@ const exampleEvents = [
     venue: "NCR, Region XII, Region III, Region V, Region VI, Region II, and others.",
     tag: "",
     target: "Cities, Municipalities",
-    image: "",
+    image: Rollout,
     colorId: 7,
   },
   {
@@ -219,7 +229,7 @@ const exampleEvents = [
     venue: "Region VI",
     tag: "",
     target: "4Ps Regional Program Coordinators, NPMO Division Chiefs, OICs and Technical Staff",
-    image: "",
+    image:  Fourps,
     colorId: 4,
   },
   {
@@ -231,7 +241,7 @@ const exampleEvents = [
     venue: "Region III",
     tag: "",
     target: "Social Worker, Psychometrician, Houseparent, MO",
-    image: "",
+    image: Rollout,
     colorId: 4,
   },
   {
@@ -243,7 +253,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "Administrative and Technical Staffs",
-    image: "",
+    image: Random,
     colorId: 2,
   },
   {
@@ -255,7 +265,7 @@ const exampleEvents = [
     venue: "Region VII, Region XI, Region II, Region IV-A, MIMAROPA, and others.",
     tag: "",
     target: "Cities, Municipalities",
-    image: "",
+    image: Rollout,
     colorId: 7,
   },
   {
@@ -267,7 +277,7 @@ const exampleEvents = [
     venue: "Region X",
     tag: "",
     target: "Center Head, Supervising Social Worker",
-    image: "",
+    image: ToT,
     colorId: 2,
   },
   {
@@ -279,7 +289,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "WITH CPD UNITS",
     target: "Local Social Welfare and Development Officers (LSWDOs)",
-    image: "",
+    image: PMC,
     colorId: 7,
   },
   {
@@ -291,7 +301,7 @@ const exampleEvents = [
     venue: "Region III, Region IV-A, and CARAGA",
     tag: "",
     target: "Cities, Municipalities",
-    image: "",
+    image: Rollout,
     colorId: 7,
   },
   {
@@ -303,7 +313,7 @@ const exampleEvents = [
     venue: "Region IX",
     tag: "TRAINING OF TRAINERS",
     target: "Center Head, Supervising Social Worker, Social Worker, Supervising Houseparent, Teacher, Psychometrician,Psychologists",
-    image: "",
+    image: ToT,
     colorId: 2,
   },
   {
@@ -315,7 +325,7 @@ const exampleEvents = [
     venue: "Region I, Region VII, Region V, Region X, and MIMAROPA",
     tag: "",
     target: "Cities, Municipalities",
-    image: "",
+    image: Rollout,
     colorId: 7,
   },
   {
@@ -327,7 +337,7 @@ const exampleEvents = [
     venue: "Region I, Region VII, Region V, Region X, and MIMAROPA",
     tag: "",
     target: "Cities, Municipalities",
-    image: "",
+    image: Rollout,
     colorId: 7,
   },
   {
@@ -339,7 +349,7 @@ const exampleEvents = [
     venue: "Region VIII, Region XI, Region VI, Region IX, and others.",
     tag: "",
     target: "Cities, Municipalities",
-    image: "",
+    image: Rollout,
     colorId: 7,
   },
   {
@@ -351,7 +361,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "WITH CPD UNITS",
     target: "Local Social Welfare and Development Officers (LSWDOs)",
-    image: "",
+    image: PMC,
     colorId: 7,
   },
   {
@@ -363,7 +373,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "WITH CPD UNITS",
     target: "Local Social Welfare and Development Officers (LSWDOs)",
-    image: "",
+    image: PMC,
     colorId: 7,
   },
   {
@@ -375,7 +385,7 @@ const exampleEvents = [
     venue: "Region VII",
     tag: "",
     target: "Child, Youth, Women, Family, OP, Persons With Disabillities",
-    image: "",
+    image: Upskill,
     colorId: 4,
   },
   {
@@ -387,7 +397,7 @@ const exampleEvents = [
     venue: "CARAGA",
     tag: "",
     target: "Center Head, Supervising Social Worker",
-    image: "",
+    image: Upskill,
     colorId: 2,
   },
   {
@@ -399,7 +409,7 @@ const exampleEvents = [
     venue: "Region VIII, Region IX, Region XII, Region VI, and others.",
     tag: "",
     target: "Cities, Municipalities",
-    image: "",
+    image: Rollout,
     colorId: 7,
   },
   {
@@ -411,7 +421,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "Field Offices, Social Welfare and Developmental Agencies, and LGU-Managed Centers/Residential Care Facilities",
-    image: "",
+    image: Houseparenting,
     colorId: 5,
   },
   {
@@ -423,7 +433,7 @@ const exampleEvents = [
     venue: "Region IX, Region IV-A, Region V, Region VIII, and Region X",
     tag: "",
     target: "Cities, Municipalities",
-    image: "",
+    image: Rollout,
     colorId: 7,
   },
   {
@@ -435,7 +445,7 @@ const exampleEvents = [
     venue: "Region IX, Region IV-A, Region V, Region VIII, and Region X",
     tag: "",
     target: "Local Social Welfare and Development Officers (LSWDOs) from LGUs (Level 1-2 Rating in the SDCA)",
-    image: "",
+    image: Lad,
     colorId: 3,
   },
   {
@@ -447,7 +457,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "WITH CPD UNITS",
     target: "Local Social Welfare and Development Officers (LSWDOs)",
-    image: "",
+    image: PMC,
     colorId: 7,
   },
   {
@@ -459,7 +469,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "",
-    image: "",
+    image: Disaster,
     colorId: 7,
   },
   {
@@ -471,7 +481,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "",
-    image: "",
+    image: Disaster,
     colorId: 7,
   },
   {
@@ -483,7 +493,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "",
-    image: "",
+    image: Random,
     colorId: 7,
   },
   {
@@ -495,7 +505,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "",
-    image: "",
+    image: Random,
     colorId: 7,
   },
   {
@@ -507,7 +517,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "Local Social Welfare and Development Offices (LSWDOs)",
-    image: "",
+    image: Lad,
     colorId: 7,
   },
   {
@@ -519,7 +529,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "",
-    image: "",
+    image: ToT,
     colorId: 7,
   },
   {
@@ -531,7 +541,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "DSWD Field Offices, Social Welfare and Development Agencies and LGU-managed Centers/Residential Care Facilities",
-    image: "",
+    image: Houseparenting,
     colorId: 7,
   },
   {
@@ -543,7 +553,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "Level 1-2 Local Social Worker Officers",
-    image: "",
+    image: Lad,
     colorId: 7,
   },
   {
@@ -555,7 +565,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "",
-    image: "",
+    image: PMC,
     colorId: 7,
   },
   {
@@ -567,7 +577,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "",
-    image: "",
+    image: Random,
     colorId: 7,
   },
   {
@@ -579,7 +589,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "",
-    image: "",
+    image: Random,
     colorId: 7,
   },
   {
@@ -591,7 +601,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "",
-    image: "",
+    image: PMC,
     colorId: 7,
   },
   {
@@ -603,7 +613,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "",
-    image: "",
+    image: Random,
     colorId: 7,
   },
   {
@@ -615,7 +625,7 @@ const exampleEvents = [
     venue: "Local Social Welfare and Development Offices (LSWDOs)",
     tag: "",
     target: "DSWD Academy (Taguig City, National Capital Region)",
-    image: "",
+    image: Disaster,
     colorId: 7,
   },
   {
@@ -627,7 +637,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "",
-    image: "",
+    image: PMC,
     colorId: 7,
   },
   {
@@ -639,7 +649,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "",
-    image: "",
+    image: Random,
     colorId: 7,
   },
   {
@@ -651,7 +661,7 @@ const exampleEvents = [
     venue: "DSWD Academy (Taguig City, National Capital Region)",
     tag: "",
     target: "",
-    image: "",
+    image: Random,
     colorId: 7,
   },
 ];
