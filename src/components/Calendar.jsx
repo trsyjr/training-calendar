@@ -762,6 +762,7 @@ const exampleEvents = [
     colorId: 5,
   },
 ];
+
 const THEME_RED = "#ee1c25";
 
 const fullMonths = [
@@ -817,10 +818,19 @@ const Calendar = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Hard Reset: Force page 1 whenever any filter or context changes to prevent out-of-bounds errors
-  useEffect(() => { 
-    setCurrentPage(1); 
-  }, [searchQuery, filterCategoryId, selectedMonth, view]);
+  // NEW: Reset filters and page when switching views
+  useEffect(() => {
+    if (view === "calendar") {
+      setSearchQuery("");
+      setFilterCategoryId("All");
+    }
+    setCurrentPage(1);
+  }, [view, selectedMonth]);
+
+  // Handle manual filter changes (List View only)
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, filterCategoryId]);
 
   const filteredEvents = useMemo(() => {
     return exampleEvents.filter(event => {
@@ -873,7 +883,6 @@ const Calendar = () => {
               );
             })}
           </div>
-          {/* Calendar Event Container - Now using justify-center to keep bars in the middle vertically */}
           <div className="relative z-20 flex-1 flex flex-col justify-center pb-2 px-1 md:px-2 space-y-1">
             {eventsInWeek.map((event) => {
               const eventStart = event.startDate < weekStartDate ? weekStartDate : event.startDate;
