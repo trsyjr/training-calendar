@@ -787,7 +787,6 @@ const exampleEvents = [
   },
 ];
 
-
 const THEME_RED = "#ee1c25";
 
 const fullMonths = [
@@ -892,8 +891,9 @@ const Calendar = () => {
       const eventsInWeek = filteredEvents.filter(e => e.startDate <= weekEndDate && e.endDate >= weekStartDate);
       
       rows.push(
-        <div key={`row-${r}`} className="relative border-b border-white/10 min-h-[110px] md:min-h-[180px] flex flex-col bg-white/5 overflow-hidden">
-          <div className="grid grid-cols-7 relative z-30 h-full pointer-events-none">
+        <div key={`row-${r}`} className="relative border-b border-white/10 min-h-[110px] md:min-h-[180px] flex flex-col bg-white/5 overflow-visible">
+          {/* BACKGROUND DATE GRID */}
+          <div className="absolute inset-0 grid grid-cols-7 z-10 pointer-events-none">
             {Array.from({ length: 7 }).map((_, i) => {
               const dayIdx = weekStartOffset + i - firstDay;
               const date = new Date(fixedYear, selectedMonth, dayIdx + 1);
@@ -908,7 +908,9 @@ const Calendar = () => {
               );
             })}
           </div>
-          <div className="absolute inset-0 z-20 flex flex-col pt-8 md:pt-14 pb-1.5 md:pb-3 px-1 md:px-2 space-y-1 pointer-events-none">
+          
+          {/* EVENT BARS CONTAINER - Dynamic Height */}
+          <div className="relative z-20 flex flex-col pt-8 md:pt-14 pb-2 md:pb-4 px-1 md:px-2 space-y-1.5 pointer-events-none">
             {eventsInWeek.map((event) => {
               const eventStart = event.startDate < weekStartDate ? weekStartDate : event.startDate;
               const eventEnd = event.endDate > weekEndDate ? weekEndDate : event.endDate;
@@ -924,8 +926,8 @@ const Calendar = () => {
                       backgroundColor: THEME_RED,
                       transformOrigin: "left" 
                     }} 
-                    whileHover={{ scale: 1.02, filter: "brightness(1.2)" }} 
-                    className="text-white text-[9px] md:text-[15px] h-4 md:h-8 flex items-center px-1.5 md:px-3 cursor-pointer truncate rounded md:rounded-lg border border-white/10 shadow-md font-medium pointer-events-auto" 
+                    whileHover={{ scale: 1.01, filter: "brightness(1.2)" }} 
+                    className="text-white text-[9px] md:text-[14px] h-5 md:h-8 flex items-center px-1.5 md:px-3 cursor-pointer truncate rounded md:rounded-lg border border-white/10 shadow-md font-medium pointer-events-auto" 
                     onClick={() => setSelectedEvent(event)}
                   >
                     <span className="truncate">{(event.startDate >= weekStartDate || eventStart.getDay() === 0) && event.title}</span>
@@ -1004,7 +1006,7 @@ const Calendar = () => {
                      <h2 className="text-2xl md:text-5xl font-black text-white tracking-tighter uppercase">{fullMonths[selectedMonth]}</h2>
                      <span className="text-white/40 font-black text-lg md:text-3xl">2026</span>
                   </div>
-                  <div className="grid grid-cols-7 text-center font-medium text-white uppercase text-[10px] md:text-sm tracking-[0.05em] md:tracking-[0.3em]">
+                  <div className="grid grid-cols-7 text-center font-medium text-white uppercase text-[10px] md:text-sm tracking-[0.05em] md:tracking-[0.3em] mb-2">
                     {weekdays.map(d => <div key={d}>{d}</div>)}
                   </div>
                   <div className="glass-card rounded-lg overflow-hidden shadow-2xl">
@@ -1063,7 +1065,6 @@ const Calendar = () => {
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-[2rem] max-w-2xl w-full max-h-[90vh] overflow-y-auto relative text-slate-900 shadow-2xl" onClick={e => e.stopPropagation()}>
               <div className="h-44 md:h-56 relative">
                 {selectedEvent.image && <img src={selectedEvent.image} className="w-full h-full object-cover rounded-t-[2rem]" alt="" />}
-                {/* ONLY TAG IS ON BG IMAGE */}
                 <div className="absolute bottom-4 left-6">
                   {selectedEvent.tag && (
                     <span className="bg-[#ee1c25] text-white text-[9px] font-black px-4 py-2 rounded-lg uppercase tracking-wider shadow-lg">
@@ -1074,7 +1075,6 @@ const Calendar = () => {
                 <button onClick={() => setSelectedEvent(null)} className="absolute top-4 right-4 bg-white/20 backdrop-blur-md text-white rounded-full p-2 hover:bg-red-600 transition-all z-10"><IoClose size={24} /></button>
               </div>
               <div className="px-6 md:px-10 py-6 md:py-8">
-                {/* CATEGORY REVERTED TO THIS POSITION */}
                 <span className="text-[#4d55d9] font-black text-[10px] tracking-[0.2em] uppercase mb-2 block opacity-70">
                   {trainingCategories[selectedEvent.colorId]}
                 </span>
