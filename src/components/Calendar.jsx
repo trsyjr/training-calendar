@@ -975,9 +975,9 @@ const Calendar = () => {
           
           {/* Logo Section */}
           <div className="flex items-center gap-3 md:gap-6 p-3 md:p-4">
-            <img src={DSWDLogo} alt="DSWD Logo" className="h-8 md:h-21 w-auto object-contain" />
-            <img src={TALogo} alt="TA Logo" className="h-8 md:h-[77px] w-auto object-contain" />
-            <img src={BPLogo} alt="BP Logo" className="h-8 md:h-31 w-auto object-contain -mt-2 md:-mt-4" />
+            <img src={DSWDLogo} alt="DSWD Logo" className="h-10 md:h-21 w-auto object-contain" />
+            <img src={TALogo} alt="TA Logo" className="h-[39px] md:h-[77px] w-auto object-contain" />
+            <img src={BPLogo} alt="BP Logo" className="h-15 md:h-31 w-auto object-contain -mt-3 md:-mt-4" />
           </div>
         </header>
 
