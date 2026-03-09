@@ -1206,7 +1206,55 @@ const trainingSchedule = [
     image: Houseparenting,
     colorId: 7,
     tag: ""
-  }
+  },
+  {
+    id: 97,
+    startDate: new Date(2026, 2, 10),
+    endDate: new Date(2026, 2, 13),
+    title: "Pilot Implementation of the training manual on Parenting  LGBTQ+ Residents in DSWD Centers and Residential Care Facilities: Creating a Safe, Affirming and Inclusive Environment",
+    description: "This program equips selected CRCF MDTs with essential skills to create affirming, safe, and inclusive environments where LGBTQIA+ residents feel cared for, valued, and protected",
+    venue: "REGION VI",
+    target: "Supervising SW, HP, Teacher, Psychometrician, Psychologists",
+    image: Pilot,
+    colorId: 5,
+    tag: ""
+  },
+  {
+    id: 98,
+    startDate: new Date(2026, 2, 16),
+    endDate: new Date(2026, 2, 20),
+    title: "Training of Trainers on Modules on Nutrition Care Process Capacity Building for Houseparents in DSWD Residential Care Facilities for Children  and Youth",
+    description: "To equip the DSWD trainers  with instructional, supervisory, and evaluative skills for nutrition capacity building on implementing the Nutrition Care Process (NCP) to improve the nutritional status of children and youth in residential facilities.",
+    venue: "MIMAROPA",
+    target: "Supervising HP, Nutritionist, Medical Personnel",
+    image: ToT,
+    colorId: 5,
+    tag: ""
+  },
+  {
+    id: 99,
+    startDate: new Date(2026, 2, 22),
+    endDate: new Date(2026, 2, 28),
+    title: "Training of Trainers Parent Effectiveness Service (PSWDO)",
+    description: "The Training of Trainers (ToT) on the Parent Effectiveness Service (PES) Program Facilitators equips a nationwide pool of DSWD and LGU technical trainers with the competencies to deliver standardized PES modules, facilitation methodologies, and monitoring mechanisms in line with Republic ACT No. 11908 and its Implementing Rules and Regulations. It strenghtens their capacity to provide technical assistance, train PES facilitators, and ensure consistent, quality implementation of the program across regions, provinces, and municipalities. It also supports effective parenting education and promotes the holistic development and protection of Filipino children and families.",
+    venue: "NCR",
+    target: "",
+    image: PES,
+    colorId: 7,
+    tag: ""
+  },
+  {
+    id: 99,
+    startDate: new Date(2026, 2, 22),
+    endDate: new Date(2026, 2, 28),
+    title: "Training of Trainers Parent Effectiveness Service (PSWDO)",
+    description: "The Training of Trainers (ToT) on the Parent Effectiveness Service (PES) Program Facilitators equips a nationwide pool of DSWD and LGU technical trainers with the competencies to deliver standardized PES modules, facilitation methodologies, and monitoring mechanisms in line with Republic ACT No. 11908 and its Implementing Rules and Regulations. It strenghtens their capacity to provide technical assistance, train PES facilitators, and ensure consistent, quality implementation of the program across regions, provinces, and municipalities. It also supports effective parenting education and promotes the holistic development and protection of Filipino children and families.",
+    venue: "Cagayan de Oro",
+    target: "",
+    image: PES,
+    colorId: 7,
+    tag: ""
+  },
 ];
 
 const THEME_COLOR = "#073763";
