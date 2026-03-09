@@ -1034,7 +1034,7 @@ const Calendar = () => {
   }, [selectedMonth, searchQuery, filterCategoryId]);
 
   const filteredEvents = useMemo(() => {
-    return exampleEvents.filter(event => {
+    return trainingSchedule.filter(event => {
       const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = filterCategoryId === "All" || event.colorId === parseInt(filterCategoryId);
       
