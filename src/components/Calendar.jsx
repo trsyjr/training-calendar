@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BsPeopleFill, BsSearch, BsCalendar3, BsListUl, BsGeoAltFill, BsChevronLeft, BsChevronRight, BsChevronDown, BsFilter } from "react-icons/bs";
+import { BsPeopleFill, BsSearch, BsCalendar3, BsListUl, BsGeoAltFill, BsChevronLeft, BsChevronRight, BsChevronDown} from "react-icons/bs";
 import { IoClose } from "react-icons/io5"; 
 
 // Assets
@@ -967,7 +967,7 @@ const Calendar = () => {
       <div className="fixed inset-0 z-0" style={{ backgroundImage: `linear-gradient(to bottom, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.8)), url(${DABuilding})`, backgroundSize: "cover", backgroundPosition: "center" }} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6">
-        <header className="mb-6 md:mb-12 pt-4 md:pt-8 flex flex-col lg:flex-row items-center justify-between gap-6">
+        <header className="mb-6 md:mb-12 pt-4 md:pt-8 flex flex-col-reverse lg:flex-row items-center justify-between gap-6">
           <div className="text-center lg:text-left">
             <h1 className="text-2xl md:text-5xl font-black tracking-tighter text-[#073763]">DSWD ACADEMY 2026</h1>
             <p className="text-[#ee1c25] font-bold tracking-[0.3em] md:tracking-[1.56em] text-[10px] md:text-sm uppercase">Training Calendar</p>
@@ -989,14 +989,14 @@ const Calendar = () => {
             </div>
             
             <div className="relative">
-              <div className="lg:hidden">
+              <div className="lg:hidden flex flex-col gap-4">
                 <button onClick={() => setIsMonthDropdownOpen(!isMonthDropdownOpen)} className="w-full bg-[#073763] rounded-2xl p-4 flex justify-between items-center font-black text-white uppercase tracking-widest text-sm shadow-xl">
                   <span>{fullMonths[selectedMonth]}</span>
                   <BsChevronDown className={`transition-transform duration-300 ${isMonthDropdownOpen ? "rotate-180" : ""}`} />
                 </button>
                 <AnimatePresence>
                   {isMonthDropdownOpen && (
-                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="absolute top-full left-0 right-0 z-50 mt-2 bg-[#073763] rounded-2xl p-2 max-h-64 overflow-y-auto shadow-2xl border border-white/10">
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="absolute top-16 left-0 right-0 z-50 bg-[#073763] rounded-2xl p-2 max-h-64 overflow-y-auto shadow-2xl border border-white/10">
                       {fullMonths.map((name, index) => (
                         <button key={name} onClick={() => { setSelectedMonth(index); setIsMonthDropdownOpen(false); }} className={`w-full py-3 px-4 rounded-xl text-xs font-black text-left mb-1 transition-all ${selectedMonth === index ? "bg-white text-[#073763]" : "text-white hover:bg-white/10"}`}>
                           {name}
@@ -1005,17 +1005,27 @@ const Calendar = () => {
                     </motion.div>
                   )}
                 </AnimatePresence>
+                {/* FAQ Button Mobile */}
+                <a href="https://sites.google.com/dswd.gov.ph/dswdacademyfaqs2025/faqs" target="_blank" rel="noopener noreferrer" className="bg-[#073763] text-white p-4 rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest shadow-lg">
+                   Frequently Asked Questions
+                </a>
               </div>
 
-              <div className="hidden lg:block glass-card rounded-3xl p-5">
-                <p className="text-[#073763] font-black uppercase tracking-widest text-[10px] mb-3 ml-2">Monthly Index</p>
-                <div className="space-y-1">
-                  {fullMonths.map((name, index) => (
-                    <button key={name} onClick={() => setSelectedMonth(index)} className={`w-full py-2.5 px-5 rounded-xl text-[11px] font-black text-left transition-all ${selectedMonth === index ? "bg-[#073763] text-white shadow-lg scale-105" : "text-[#073763]/70 hover:bg-[#073763]/10"}`}>
-                      <span className="opacity-40 mr-3">{(index + 1).toString().padStart(2, '0')}</span>{name}
-                    </button>
-                  ))}
+              <div className="hidden lg:block space-y-4">
+                <div className="glass-card rounded-3xl p-5">
+                  <p className="text-[#073763] font-black uppercase tracking-widest text-[10px] mb-3 ml-2">Monthly Index</p>
+                  <div className="space-y-1">
+                    {fullMonths.map((name, index) => (
+                      <button key={name} onClick={() => setSelectedMonth(index)} className={`w-full py-2.5 px-5 rounded-xl text-[11px] font-black text-left transition-all ${selectedMonth === index ? "bg-[#073763] text-white shadow-lg scale-105" : "text-[#073763]/70 hover:bg-[#073763]/10"}`}>
+                        <span className="opacity-40 mr-3">{(index + 1).toString().padStart(2, '0')}</span>{name}
+                      </button>
+                    ))}
+                  </div>
                 </div>
+                {/* FAQ Button Desktop */}
+                <a href="https://sites.google.com/dswd.gov.ph/dswdacademyfaqs2025/faqs" target="_blank" rel="noopener noreferrer" className="w-full bg-[#073763] hover:bg-[#134c81] text-white p-5 rounded-3xl flex flex-col items-center justify-center gap-2 text-center font-black text-[11px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02]">
+                  Frequently Asked Questions
+                </a>
               </div>
             </div>
           </aside>
@@ -1156,8 +1166,8 @@ const Calendar = () => {
                   <div className="flex items-start gap-3 md:col-span-2"><div className="bg-[#073763]/10 p-2 rounded-lg"><BsPeopleFill className="text-[#073763]" /></div><div className="flex flex-col"><span className="text-[9px] font-black text-[#073763]/40 uppercase">Target Participants</span><span className="text-xs md:text-sm font-bold">{selectedEvent.target}</span></div></div>
                 </div>
                 <div className="bg-gray-50 p-5 md:p-6 rounded-2xl">
-                   <p className="text-[9px] font-black text-[#073763]/40 uppercase mb-2">Program Overview</p>
-                   <ExpandableDescription text={selectedEvent.description} />
+                    <p className="text-[9px] font-black text-[#073763]/40 uppercase mb-2">Program Overview</p>
+                    <ExpandableDescription text={selectedEvent.description} />
                 </div>
               </div>
             </motion.div>
