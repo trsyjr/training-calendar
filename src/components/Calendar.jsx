@@ -1185,7 +1185,6 @@ const Calendar = () => {
                     </motion.div>
                   )}
                 </AnimatePresence>
-                {/* FAQ Button Mobile */}
                 <a href="https://sites.google.com/dswd.gov.ph/dswdacademyfaqs2026/faqs" target="_blank" rel="noopener noreferrer" className="bg-[#073763] text-white p-4 rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest shadow-lg">
                    Frequently Asked Questions
                 </a>
@@ -1202,8 +1201,7 @@ const Calendar = () => {
                     ))}
                   </div>
                 </div>
-                {/* FAQ Button Desktop */}
-                <a href="https://sites.google.com/dswd.gov.ph/dswdacademyfaqs2025/faqs" target="_blank" rel="noopener noreferrer" className="w-full bg-[#073763] hover:bg-[#134c81] text-white p-5 rounded-3xl flex flex-col items-center justify-center gap-2 text-center font-black text-[11px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02]">
+                <a href="https://sites.google.com/dswd.gov.ph/dswdacademyfaqs2026/faqs" target="_blank" rel="noopener noreferrer" className="w-full bg-[#073763] hover:bg-[#134c81] text-white p-5 rounded-3xl flex flex-col items-center justify-center gap-2 text-center font-black text-[11px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02]">
                   Frequently Asked Questions
                 </a>
               </div>
