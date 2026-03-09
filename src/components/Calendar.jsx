@@ -439,18 +439,18 @@ const trainingSchedule = [
     colorId: 7,
     tag: ""
   },
-  {
-    id: 35,
-    startDate: new Date(2026, 9, 10),
-    endDate: new Date(2026, 9, 15),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "MIMAROPA",
-    target: "",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
+  // {
+  //   id: 35,
+  //   startDate: new Date(2026, 9, 10),
+  //   endDate: new Date(2026, 9, 15),
+  //   title: "Rollout Parent Effectiveness Service",
+  //   description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
+  //   venue: "MIMAROPA",
+  //   target: "",
+  //   image: PES,
+  //   colorId: 7,
+  //   tag: ""
+  // },
   {
     id: 36,
     startDate: new Date(2026, 9, 10),
@@ -679,18 +679,18 @@ const trainingSchedule = [
     colorId: 7,
     tag: ""
   },
-  {
-    id: 55,
-    startDate: new Date(2026, 4, 31),
-    endDate: new Date(2026, 5, 5),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "CALABARZON",
-    target: "",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
+  // {
+  //   id: 55,
+  //   startDate: new Date(2026, 4, 31),
+  //   endDate: new Date(2026, 5, 5),
+  //   title: "Rollout Parent Effectiveness Service",
+  //   description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
+  //   venue: "CALABARZON",
+  //   target: "",
+  //   image: PES,
+  //   colorId: 7,
+  //   tag: ""
+  // },
   {
     id: 56,
     startDate: new Date(2026, 4, 31),
@@ -1159,18 +1159,18 @@ const trainingSchedule = [
     colorId: 3,
     tag: ""
   },
-  {
-    id: 95,
-    startDate: new Date(2026, 10, 9),
-    endDate: new Date(2026, 10, 13),
-    title: "Training on Financial Education: Mitigating Socio-Economic Challenges of Clients through Financial Education for Social Workers",
-    description: "",
-    venue: "DSWD ACADEMY",
-    target: "",
-    image: Random,
-    colorId: 5,
-    tag: "WITH CPD UNITS"
-  },
+  // {
+  //   id: 95,
+  //   startDate: new Date(2026, 10, 9),
+  //   endDate: new Date(2026, 10, 13),
+  //   title: "Training on Financial Education: Mitigating Socio-Economic Challenges of Clients through Financial Education for Social Workers",
+  //   description: "",
+  //   venue: "DSWD ACADEMY",
+  //   target: "",
+  //   image: Random,
+  //   colorId: 5,
+  //   tag: "WITH CPD UNITS"
+  // },
   {
     id: 95,
     startDate: new Date(2026, 10, 9),
@@ -1250,6 +1250,18 @@ const trainingSchedule = [
     title: "Training of Trainers Parent Effectiveness Service (PSWDO)",
     description: "The Training of Trainers (ToT) on the Parent Effectiveness Service (PES) Program Facilitators equips a nationwide pool of DSWD and LGU technical trainers with the competencies to deliver standardized PES modules, facilitation methodologies, and monitoring mechanisms in line with Republic ACT No. 11908 and its Implementing Rules and Regulations. It strenghtens their capacity to provide technical assistance, train PES facilitators, and ensure consistent, quality implementation of the program across regions, provinces, and municipalities. It also supports effective parenting education and promotes the holistic development and protection of Filipino children and families.",
     venue: "Cagayan de Oro",
+    target: "",
+    image: PES,
+    colorId: 7,
+    tag: ""
+  },
+  {
+    id: 96,
+    startDate: new Date(2026, 9, 26),
+    endDate: new Date(2026, 9, 30),
+    title: "Buklod Paglaom",
+    description: "",
+    venue: "DSWD ACADEMY",
     target: "",
     image: PES,
     colorId: 7,
