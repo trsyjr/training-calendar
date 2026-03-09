@@ -1186,7 +1186,7 @@ const Calendar = () => {
                   )}
                 </AnimatePresence>
                 {/* FAQ Button Mobile */}
-                <a href="https://sites.google.com/dswd.gov.ph/dswdacademyfaqs2025/faqs" target="_blank" rel="noopener noreferrer" className="bg-[#073763] text-white p-4 rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest shadow-lg">
+                <a href="https://sites.google.com/dswd.gov.ph/dswdacademyfaqs2026/faqs" target="_blank" rel="noopener noreferrer" className="bg-[#073763] text-white p-4 rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest shadow-lg">
                    Frequently Asked Questions
                 </a>
               </div>
