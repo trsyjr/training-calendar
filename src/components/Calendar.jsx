@@ -1012,7 +1012,7 @@ const ExpandableDescription = ({ text }) => {
 const Calendar = () => {
   const today = new Date();
   const fixedYear = 2026;
-  const [selectedMonth, setSelectedMonth] = useState(today.getMonth()); 
+  const [selectedMonth, setSelectedMonth] = useState(2); 
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [view, setView] = useState("calendar"); 
   const [searchQuery, setSearchQuery] = useState("");
@@ -1020,8 +1020,6 @@ const Calendar = () => {
   const [isMonthDropdownOpen, setIsMonthDropdownOpen] = useState(false);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   
-  const [expandedRows, setExpandedRows] = useState({});
-
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -1033,18 +1031,22 @@ const Calendar = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-    setExpandedRows({});
   }, [selectedMonth, searchQuery, filterCategoryId]);
 
   const filteredEvents = useMemo(() => {
-    return trainingSchedule.filter(event => {
+    return exampleEvents.filter(event => {
       const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = filterCategoryId === "All" || event.colorId === parseInt(filterCategoryId);
-      const start = new Date(event.startDate).getTime();
-      const end = new Date(event.endDate).getTime();
-      const monthStart = new Date(fixedYear, selectedMonth, 1).getTime();
-      const monthEnd = new Date(fixedYear, selectedMonth + 1, 0, 23, 59, 59).getTime();
-      return matchesSearch && matchesCategory && (start <= monthEnd && end >= monthStart);
+      
+      const startM = event.startDate.getMonth();
+      const startY = event.startDate.getFullYear();
+      const endM = event.endDate.getMonth();
+      const endY = event.endDate.getFullYear();
+
+      const matchesMonth = (startY === fixedYear && startM === selectedMonth) || 
+                           (endY === fixedYear && endM === selectedMonth);
+      
+      return matchesSearch && matchesCategory && matchesMonth;
     });
   }, [searchQuery, filterCategoryId, selectedMonth]);
 
@@ -1055,20 +1057,16 @@ const Calendar = () => {
   }, [filteredEvents, currentPage]);
 
   const formatDateRange = (start, end) => {
-    const startDay = start.getDate();
-    const endDay = end.getDate();
-    const startMonth = start.toLocaleString("en-US", { month: "short" });
-    const endMonth = end.toLocaleString("en-US", { month: "short" });
-    const year = start.getFullYear();
-    if (startMonth === endMonth) return `${startDay}-${endDay} ${startMonth} ${year}`;
-    return `${startDay} ${startMonth} - ${endDay} ${endMonth} ${year}`;
+    return `${start.getDate()}-${end.getDate()} ${start.toLocaleString("en-US", { month: "short" })} ${start.getFullYear()}`;
   };
 
-  const { firstDay, numRows } = useMemo(() => {
+  const { firstDay, daysArray, numRows } = useMemo(() => {
     const fd = new Date(fixedYear, selectedMonth, 1).getDay();
     const dCount = new Date(fixedYear, selectedMonth + 1, 0).getDate();
-    const rows = Math.ceil((fd + dCount) / 7);
-    return { firstDay: fd, numRows: rows };
+    const dArray = Array.from({ length: dCount }, (_, i) => new Date(fixedYear, selectedMonth, i + 1));
+    const totalSlots = fd + dCount;
+    const rows = Math.ceil(totalSlots / 7);
+    return { firstDay: fd, daysArray: dArray, numRows: rows };
   }, [selectedMonth]);
 
   const renderCalendarRows = () => {
@@ -1078,23 +1076,20 @@ const Calendar = () => {
     for (let r = 0; r < numRows; r++) {
       const weekStartOffset = r * 7;
       const weekStartDate = new Date(fixedYear, selectedMonth, weekStartOffset - firstDay + 1);
-      const weekEndDate = new Date(fixedYear, selectedMonth, weekStartOffset - firstDay + 7, 23, 59, 59);
+      const weekEndDate = new Date(fixedYear, selectedMonth, weekStartOffset - firstDay + 7);
       
-      const weekEvents = filteredEvents.filter(e => {
-        const eStart = new Date(e.startDate);
-        const eEnd = new Date(e.endDate);
+      const eventsInWeek = filteredEvents.filter(e => {
+        const eStart = new Date(e.startDate).setHours(0,0,0,0);
+        const eEnd = new Date(e.endDate).setHours(23,59,59,999);
         return eStart <= weekEndDate && eEnd >= weekStartDate;
       });
-
-      const isExpanded = expandedRows[r];
-      const displayedEvents = isExpanded ? weekEvents : weekEvents.slice(0, 3);
-      const remainingCount = weekEvents.length - 3;
-
+      
       rows.push(
-        <div key={`row-${r}`} className={`relative border-b border-gray-400/50 flex flex-col transition-all duration-300 ${isExpanded ? "min-h-[280px] pb-10" : "min-h-[100px] md:min-h-[190px]"}`}>
+        <div key={`row-${r}`} className="relative border-b border-gray-400/50 min-h-[90px] md:min-h-[180px] flex flex-col overflow-visible">
           <div className="absolute inset-0 grid grid-cols-7 z-10 pointer-events-none">
             {Array.from({ length: 7 }).map((_, i) => {
-              const date = new Date(fixedYear, selectedMonth, weekStartOffset + i - firstDay + 1);
+              const dayIdx = weekStartOffset + i - firstDay;
+              const date = new Date(fixedYear, selectedMonth, dayIdx + 1);
               const isCurrentMonth = date.getMonth() === selectedMonth;
               const isToday = date.toDateString() === today.toDateString();
               return (
@@ -1108,50 +1103,31 @@ const Calendar = () => {
           </div>
           
           <div className="relative z-20 flex flex-col pt-6 md:pt-14 pb-1 md:pb-4 px-0.5 md:px-2 space-y-1 pointer-events-none">
-            {displayedEvents.map((event) => {
+            {eventsInWeek.map((event) => {
               const eventStart = event.startDate < weekStartDate ? weekStartDate : event.startDate;
               const eventEnd = event.endDate > weekEndDate ? weekEndDate : event.endDate;
               const startCol = (eventStart.getDay() % 7) + 1;
-              const duration = Math.ceil(Math.abs(eventEnd - eventStart) / (1000 * 60 * 60 * 24)) + 1;
-
+              const duration = Math.round((eventEnd - eventStart) / (1000 * 60 * 60 * 24)) + 1;
               return (
                 <div key={`${event.id}-${r}`} className="grid grid-cols-7 w-full gap-0 px-px">
                   <motion.div 
-                    layout
-                    style={{ gridColumn: `${startCol} / span ${duration}`, backgroundColor: THEME_COLOR }} 
-                    className="text-white text-[7px] md:text-[13px] h-4 md:h-7 flex items-center px-1 md:px-3 cursor-pointer truncate rounded md:rounded-lg border border-white/20 shadow-sm font-medium pointer-events-auto hover:brightness-110 hover:scale-[1.01] transition-all" 
+                    initial={{ opacity: 0, scaleX: 0 }}
+                    animate={{ opacity: 1, scaleX: 1 }}
+                    style={{ 
+                      gridColumn: `${startCol} / span ${duration}`, 
+                      backgroundColor: THEME_COLOR,
+                      transformOrigin: "left" 
+                    }} 
+                    whileHover={{ scale: 1.01, filter: "brightness(1.2)" }} 
+                    className="text-white text-[7px] md:text-[14px] h-4 md:h-8 flex items-center px-1 md:px-3 cursor-pointer truncate rounded md:rounded-lg border border-white/20 shadow-sm md:shadow-md font-medium pointer-events-auto" 
                     onClick={() => setSelectedEvent(event)}
                   >
-                    <span className="truncate">{(event.startDate.toDateString() === eventStart.toDateString() || eventStart.getDay() === 0) && event.title}</span>
+                    <span className="truncate">{(event.startDate >= weekStartDate || eventStart.getDay() === 0) && event.title}</span>
                   </motion.div>
                 </div>
               );
             })}
-
-            {!isExpanded && remainingCount > 0 && (
-              <div className="grid grid-cols-7 w-full gap-0 px-px">
-                <button 
-                  onClick={() => setExpandedRows(prev => ({...prev, [r]: true}))}
-                  style={{ gridColumn: "1 / span 7", backgroundColor: "#990000" }}
-                  className="pointer-events-auto text-white text-[7px] md:text-[10px] font-black h-4 md:h-7 flex items-center justify-center rounded md:rounded-lg hover:brightness-125 hover:scale-[1.005] transition-all shadow-sm border border-white/20 mt-1"
-                >
-                  +{remainingCount} MORE TRAINING SESSIONS
-                </button>
-              </div>
-            )}
           </div>
-
-          {/* CENTERED "SHOW LESS" TEXT AT BOTTOM OF ROW */}
-          {isExpanded && weekEvents.length > 3 && (
-            <div className="absolute bottom-2 left-0 right-0 flex justify-center z-30">
-              <button 
-                onClick={() => setExpandedRows(prev => ({...prev, [r]: false}))}
-                className="pointer-events-auto text-[#073763] text-[8px] md:text-[11px] font-black uppercase tracking-widest hover:underline opacity-60 hover:opacity-100 transition-all"
-              >
-                Show Less
-              </button>
-            </div>
-          )}
         </div>
       );
     }
@@ -1176,6 +1152,8 @@ const Calendar = () => {
             <h1 className="text-2xl md:text-5xl font-black tracking-tighter text-[#073763]">DSWD ACADEMY 2026</h1>
             <p className="text-[#ee1c25] font-bold tracking-[0.3em] md:tracking-[1.56em] text-[10px] md:text-sm uppercase">Training Calendar</p>
           </div>
+          
+          {/* Logo Section */}
           <div className="flex items-center gap-3 md:gap-6 p-3 md:p-4">
             <img src={DSWDLogo} alt="DSWD Logo" className="h-10 md:h-21 w-auto object-contain" />
             <img src={TALogo} alt="TA Logo" className="h-[39px] md:h-[77px] w-auto object-contain" />
@@ -1190,16 +1168,44 @@ const Calendar = () => {
               <button onClick={() => setView("list")} className={`flex-1 py-2.5 md:py-3 rounded-xl flex items-center justify-center gap-2 text-xs md:text-sm font-black transition-all ${view === "list" ? "bg-white text-[#073763]" : "text-white hover:bg-white/10"}`}><BsListUl/> List</button>
             </div>
             
-            <div className="hidden lg:block space-y-4">
-              <div className="glass-card rounded-3xl p-5">
-                <p className="text-[#073763] font-black uppercase tracking-widest text-[10px] mb-3 ml-2">Monthly Index</p>
-                <div className="space-y-1">
-                  {fullMonths.map((name, index) => (
-                    <button key={name} onClick={() => setSelectedMonth(index)} className={`w-full py-2.5 px-5 rounded-xl text-[11px] font-black text-left transition-all ${selectedMonth === index ? "bg-[#073763] text-white shadow-lg scale-105" : "text-[#073763]/70 hover:bg-[#073763]/10"}`}>
-                      <span className="opacity-40 mr-3">{(index + 1).toString().padStart(2, '0')}</span>{name}
-                    </button>
-                  ))}
+            <div className="relative">
+              <div className="lg:hidden flex flex-col gap-4">
+                <button onClick={() => setIsMonthDropdownOpen(!isMonthDropdownOpen)} className="w-full bg-[#073763] rounded-2xl p-4 flex justify-between items-center font-black text-white uppercase tracking-widest text-sm shadow-xl">
+                  <span>{fullMonths[selectedMonth]}</span>
+                  <BsChevronDown className={`transition-transform duration-300 ${isMonthDropdownOpen ? "rotate-180" : ""}`} />
+                </button>
+                <AnimatePresence>
+                  {isMonthDropdownOpen && (
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="absolute top-16 left-0 right-0 z-50 bg-[#073763] rounded-2xl p-2 max-h-64 overflow-y-auto shadow-2xl border border-white/10">
+                      {fullMonths.map((name, index) => (
+                        <button key={name} onClick={() => { setSelectedMonth(index); setIsMonthDropdownOpen(false); }} className={`w-full py-3 px-4 rounded-xl text-xs font-black text-left mb-1 transition-all ${selectedMonth === index ? "bg-white text-[#073763]" : "text-white hover:bg-white/10"}`}>
+                          {name}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                {/* FAQ Button Mobile */}
+                <a href="https://sites.google.com/dswd.gov.ph/dswdacademyfaqs2025/faqs" target="_blank" rel="noopener noreferrer" className="bg-[#073763] text-white p-4 rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest shadow-lg">
+                   Frequently Asked Questions
+                </a>
+              </div>
+
+              <div className="hidden lg:block space-y-4">
+                <div className="glass-card rounded-3xl p-5">
+                  <p className="text-[#073763] font-black uppercase tracking-widest text-[10px] mb-3 ml-2">Monthly Index</p>
+                  <div className="space-y-1">
+                    {fullMonths.map((name, index) => (
+                      <button key={name} onClick={() => setSelectedMonth(index)} className={`w-full py-2.5 px-5 rounded-xl text-[11px] font-black text-left transition-all ${selectedMonth === index ? "bg-[#073763] text-white shadow-lg scale-105" : "text-[#073763]/70 hover:bg-[#073763]/10"}`}>
+                        <span className="opacity-40 mr-3">{(index + 1).toString().padStart(2, '0')}</span>{name}
+                      </button>
+                    ))}
+                  </div>
                 </div>
+                {/* FAQ Button Desktop */}
+                <a href="https://sites.google.com/dswd.gov.ph/dswdacademyfaqs2025/faqs" target="_blank" rel="noopener noreferrer" className="w-full bg-[#073763] hover:bg-[#134c81] text-white p-5 rounded-3xl flex flex-col items-center justify-center gap-2 text-center font-black text-[11px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02]">
+                  Frequently Asked Questions
+                </a>
               </div>
             </div>
           </aside>
@@ -1209,8 +1215,10 @@ const Calendar = () => {
               {view === "calendar" ? (
                 <motion.div key={`calendar-${selectedMonth}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   <div className="flex justify-between items-end px-2 md:px-4 mb-4 md:mb-6">
-                    <h2 className="text-xl md:text-5xl font-black uppercase tracking-tight">{fullMonths[selectedMonth]}</h2>
-                    <span className="text-[#073763]/30 font-black text-sm md:text-3xl leading-none">2026</span>
+                      <div className="flex flex-col">
+                        <h2 className="text-xl md:text-5xl font-black uppercase tracking-tight">{fullMonths[selectedMonth]}</h2>
+                      </div>
+                      <span className="text-[#073763]/30 font-black text-sm md:text-3xl leading-none">2026</span>
                   </div>
                   <div className="grid grid-cols-7 text-center font-black text-white bg-[#073763] rounded-xl mb-3 py-3 md:py-4 uppercase text-[9px] md:text-xs">
                     {weekdays.map(d => <div key={d}>{d}</div>)}
@@ -1226,13 +1234,21 @@ const Calendar = () => {
                     </div>
                     
                     <div className="relative md:w-80">
-                      <button onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)} className="w-full bg-white/10 border border-white/20 rounded-xl py-2.5 px-4 flex justify-between items-center text-[10px] font-black text-white uppercase tracking-wider text-left">
+                      <button 
+                        onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+                        className="w-full bg-white/10 border border-white/20 rounded-xl py-2.5 px-4 flex justify-between items-center text-[10px] font-black text-white uppercase tracking-wider text-left"
+                      >
                         <span className="truncate">{filterCategoryId === "All" ? "All Categories" : trainingCategories[filterCategoryId]}</span>
                         <BsChevronDown className={`transition-transform duration-300 ${isCategoryDropdownOpen ? "rotate-180" : ""}`} />
                       </button>
                       <AnimatePresence>
                         {isCategoryDropdownOpen && (
-                          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute top-full left-0 right-0 z-50 mt-2 bg-[#073763] rounded-2xl p-2 max-h-64 overflow-y-auto shadow-2xl border border-white/10">
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }} 
+                            animate={{ opacity: 1, y: 0 }} 
+                            exit={{ opacity: 0, y: 10 }} 
+                            className="absolute top-full left-0 right-0 z-50 mt-2 bg-[#073763] rounded-2xl p-2 max-h-64 overflow-y-auto shadow-2xl border border-white/10"
+                          >
                             <button onClick={() => { setFilterCategoryId("All"); setIsCategoryDropdownOpen(false); }} className={`w-full py-2.5 px-4 rounded-xl text-[10px] font-black text-left mb-1 transition-all ${filterCategoryId === "All" ? "bg-white text-[#073763]" : "text-white hover:bg-white/10"}`}>ALL CATEGORIES</button>
                             {Object.entries(trainingCategories).map(([id, label]) => (
                               <button key={id} onClick={() => { setFilterCategoryId(id); setIsCategoryDropdownOpen(false); }} className={`w-full py-2.5 px-4 rounded-xl text-[10px] font-black text-left mb-1 transition-all uppercase ${filterCategoryId === id ? "bg-white text-[#073763]" : "text-white hover:bg-white/10"}`}>
@@ -1248,11 +1264,21 @@ const Calendar = () => {
                   <div className="flex flex-col gap-3">
                     <AnimatePresence mode="popLayout">
                     {paginatedEvents.length > 0 ? paginatedEvents.map((event, index) => (
-                      <motion.div key={event.id} custom={index} variants={cardVariants} initial="hidden" animate="visible" exit="exit" layout onClick={() => setSelectedEvent(event)} className="bg-white/80 rounded-2xl p-4 md:p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center cursor-pointer hover:shadow-xl transition-all border-l-[6px] border-[#073763] shadow-md group relative overflow-hidden">
+                      <motion.div 
+                        key={event.id} 
+                        custom={index} 
+                        variants={cardVariants} 
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        layout
+                        onClick={() => setSelectedEvent(event)} 
+                        className="bg-white/80 rounded-2xl p-4 md:p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center cursor-pointer hover:shadow-xl transition-all border-l-[6px] border-[#073763] shadow-md group relative overflow-hidden"
+                      >
                         <div className="flex-1 w-full space-y-1">
                           <div className="flex flex-wrap gap-x-4 gap-y-1 text-[9px] font-black text-[#073763]/50 uppercase tracking-widest">
                             <span className="flex items-center gap-1.5"><BsCalendar3/> {formatDateRange(event.startDate, event.endDate)}</span>
-                            <span className="flex items-center gap-1.5"><BsGeoAltFill/> {event.venue}</span>
+                            <span className="flex items-center gap-1.5"><BsGeoAltFill/> {event.venue.split('(')[0]}</span>
                           </div>
                           <h3 className="text-[#073763] font-black text-base md:text-lg group-hover:text-[#ee1c25] transition-colors leading-tight">{event.title}</h3>
                           <p className="text-[9px] font-bold text-[#073763]/60 uppercase">{trainingCategories[event.colorId]}</p>
@@ -1265,9 +1291,25 @@ const Calendar = () => {
 
                   {filteredEvents.length > itemsPerPage && (
                     <div className="flex items-center justify-center gap-6 pt-4 font-black text-[#073763] uppercase tracking-widest text-[10px] md:text-xs">
-                      <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className={`flex items-center gap-2 transition-opacity ${currentPage === 1 ? "opacity-20 cursor-not-allowed" : "hover:text-[#ee1c25]"}`}><BsChevronLeft strokeWidth={1} /> Prev</button>
-                      <span className="bg-[#073763] text-white px-4 py-1.5 rounded-full shadow-lg">{currentPage} / {totalPages}</span>
-                      <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className={`flex items-center gap-2 transition-opacity ${currentPage === totalPages ? "opacity-20 cursor-not-allowed" : "hover:text-[#ee1c25]"}`}>Next <BsChevronRight strokeWidth={1} /></button>
+                      <button 
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className={`flex items-center gap-2 transition-opacity ${currentPage === 1 ? "opacity-20 cursor-not-allowed" : "hover:text-[#ee1c25]"}`}
+                      >
+                        <BsChevronLeft strokeWidth={1} /> Prev
+                      </button>
+                      
+                      <span className="bg-[#073763] text-white px-4 py-1.5 rounded-full shadow-lg">
+                        {currentPage} out of {totalPages}
+                      </span>
+
+                      <button 
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        className={`flex items-center gap-2 transition-opacity ${currentPage === totalPages ? "opacity-20 cursor-not-allowed" : "hover:text-[#ee1c25]"}`}
+                      >
+                        Next <BsChevronRight strokeWidth={1} />
+                      </button>
                     </div>
                   )}
                 </motion.div>
@@ -1288,12 +1330,20 @@ const Calendar = () => {
                 <button onClick={() => setSelectedEvent(null)} className="absolute top-4 right-4 z-20 bg-white/20 backdrop-blur-md p-1.5 rounded-full text-white hover:bg-white hover:text-[#073763] transition-all border border-white/30">
                   <IoClose size={20} />
                 </button>
+                <div className="absolute bottom-4 left-6 z-20">
+                  {selectedEvent.tag && selectedEvent.tag.trim() !== "" && (
+                    <span className="bg-[#ee1c25] text-white text-[8px] md:text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">
+                      {selectedEvent.tag}
+                    </span>
+                  )}
+                </div>
               </div>
-              <div className="flex-1 p-6 md:p-10 overflow-y-auto">
+              <div className="flex-1 p-6 md:p-10 overflow-y-auto custom-scrollbar">
                 <h2 className="text-xl md:text-3xl font-black text-[#073763] mb-4 md:mb-6 leading-tight">{selectedEvent.title}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-8 mb-6 md:mb-8">
                   <div className="flex items-start gap-3"><div className="bg-[#073763]/10 p-2 rounded-lg"><BsCalendar3 className="text-[#073763]" /></div><div className="flex flex-col"><span className="text-[9px] font-black text-[#073763]/40 uppercase">Schedule</span><span className="text-xs md:text-sm font-bold">{formatDateRange(selectedEvent.startDate, selectedEvent.endDate)}</span></div></div>
                   <div className="flex items-start gap-3"><div className="bg-[#073763]/10 p-2 rounded-lg"><BsGeoAltFill className="text-[#073763]" /></div><div className="flex flex-col"><span className="text-[9px] font-black text-[#073763]/40 uppercase">Location</span><span className="text-xs md:text-sm font-bold">{selectedEvent.venue}</span></div></div>
+                  <div className="flex items-start gap-3 md:col-span-2"><div className="bg-[#073763]/10 p-2 rounded-lg"><BsPeopleFill className="text-[#073763]" /></div><div className="flex flex-col"><span className="text-[9px] font-black text-[#073763]/40 uppercase">Target Participants</span><span className="text-xs md:text-sm font-bold">{selectedEvent.target}</span></div></div>
                 </div>
                 <div className="bg-gray-50 p-5 md:p-6 rounded-2xl">
                     <p className="text-[9px] font-black text-[#073763]/40 uppercase mb-2">Program Overview</p>
