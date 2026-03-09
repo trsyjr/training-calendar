@@ -2,12 +2,9 @@ import React, { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BsPeopleFill, BsSearch, BsCalendar3, BsListUl, BsGeoAltFill, BsChevronLeft, BsChevronRight, BsChevronDown} from "react-icons/bs";
 import { IoClose } from "react-icons/io5"; 
-
-// Assets
 import DABuilding from "../assets/DABuilding.jpeg";
 import PMC from "../assets/PMC.JPG";
 import PES from "../assets/PES.png";
-import News3 from "../assets/News3.png";
 import Disaster from "../assets/Disaster.jpg";
 import ToT from "../assets/ToT.png";
 import Pilot from "../assets/Pilot.JPG";
@@ -17,8 +14,6 @@ import Houseparenting from "../assets/Houseparenting.png";
 import Lad from "../assets/Lad.JPG";
 import Random from "../assets/Random.png";
 import Upskill from "../assets/Upskill.png";
-
-// New Logo Imports
 import DSWDLogo from "../assets/DSWDLogo.png";
 import TALogo from "../assets/TALogo.png";
 import BPLogo from "../assets/BPLogo.png";
