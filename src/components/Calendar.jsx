@@ -1155,8 +1155,8 @@ const trainingSchedule = [
     description: "",
     venue: "DSWD ACADEMY",
     target: "",
-    image: PES,
-    colorId: 7,
+    image: Random,
+    colorId: 5,
     tag: ""
   },
   {
