@@ -98,7 +98,7 @@ const trainingSchedule = [
     title: "Training on Pre-Marriage Counseling",
     description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
     venue: "DSWD ACADEMY",
-    target: "",
+    target: "Local Social Welfare and Development Officers",
     image: PMC,
     colorId: 7,
     tag: "WITH CPD UNITS"
@@ -109,7 +109,7 @@ const trainingSchedule = [
     endDate: new Date(2026, 1, 27),
     title: "(Localized) Training on Pre-Marriage Counseling",
     description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "BATAAN",
+    venue: "Tourism Pavillion, Bataan",
     target: "",
     image: PMC,
     colorId: 7,
@@ -119,10 +119,10 @@ const trainingSchedule = [
     id: 8,
     startDate: new Date(2026, 2, 8),
     endDate: new Date(2026, 2, 14),
-    title: "Training of Trainers Parent Effectiveness Service (FO, LMT, TS)",
+    title: "Training of Trainers: Parent Effectiveness Service Program Facilitators",
     description: "The Training of Trainers (ToT) on the Parent Effectiveness Service (PES) Program Facilitators equips a nationwide pool of DSWD and LGU technical trainers with the competencies to deliver standardized PES modules, facilitation methodologies, and monitoring mechanisms.",
     venue: "The Orchard Hotel, Baguio City",
-    target: "",
+    target: "Field Offices, Program Facilitators",
     image: PES,
     colorId: 7,
     tag: ""
@@ -131,7 +131,7 @@ const trainingSchedule = [
     id: 9,
     startDate: new Date(2026, 2, 23),
     endDate: new Date(2026, 2, 27),
-    title: "Roll out of Mental Health and Well Being Module (Center Heads / RCC)",
+    title: "Roll out of Mental Health and Well Being Module",
     description: "The rollout of these five modules is being undertaken to ensure that Mental Health and Wellbeing Focals and Center Heads of CRCFs are aligned and in sync in delivering consistent, responsive, and quality support services to their staff. By grounding both leadership and focal persons in the same framework—covering compassion and empathy, supportive work environments, burnout prevention, leadership for well-being, and resilience—the initiative promotes a unified understanding of mental health priorities, strategies, and interventions across centers. This alignment strengthens coordination, clarifies roles, and fosters shared accountability, ultimately ensuring that efforts to support staff well-being are coherent, collaborative, and effectively implemented at all levels of center operation",
     venue: "REGION VI",
     target: "Center Heads, RCC",
@@ -170,7 +170,7 @@ const trainingSchedule = [
     title: "Phronetic Leadership Training",
     description: "The  Phronetic Leadership Traiining is rooted in Aristotle’s concept of phronesis (practical wisdom) and emphasizing ethical judgment, contextual decision-making, and values-driven leadership, will be beneficial to leaders and middle managers at DSWD. Considering today’s complex and uncertain environments, leaders need not only technical expertise and theoretical knowledge but also wisdom in applying values, intuition, and experience to guide people and organizations toward sustainable success. This 3-day activity is designed to immerse participants in the principles and practices of phronetic leadership, equipping them to become reflective, ethical, and action-oriented leaders.",
     venue: "DSWD ACADEMY",
-    target: "",
+    target: "RSIDG MANCOM, Senior Chiefs, Senior Technical Staff ",
     image: Random,
     colorId: 5,
     tag: ""
@@ -386,7 +386,7 @@ const trainingSchedule = [
     title: "Internal Training for Administrative Staff",
     description: "This training is designed to enhance efficiency, accuracy, and confidence among administrative personnel while reinforcing their critical role in public service delivery. Equipped with the new set of skills, they will be able to perform their tasks more productively, effectively, and efficiently, leading to better individual and organizational performance and quality service delivery.",
     venue: "DSWD ACADEMY",
-    target: "",
+    target: "DSWD Academy Administrative and Technical Staff",
     image: Random,
     colorId: 5,
     tag: ""
@@ -830,7 +830,7 @@ const trainingSchedule = [
     title: "Ladderized 1: Training on Leadership and Management for Local Social Welfare and Development Officers: Catalysts for Change",
     description: "The Leadership Training for Local Social Welfare and Development Officers (LSWDOs) is designed to build the essential skills, knowledge, and mindset required for effective leadership in social welfare programs. This training equips LSWDOs to navigate policy changes, manage resources, lead teams, and respond to various community challenges. Through a focus on ethical leadership, accountability, emotional intelligence, decision-making, and problem-solving, the program enhances their  capacity to deliver impactful services. It also promotes stakeholder collaboration to ensure more efficient service delivery and greater community impact. By empowering LSWDOs to advocate for marginalized populations, promote social justice.  mentor future leaders, and design sustainable, inclusive programs, the training contributes to the long-term well-being and development of the communities they serve.",
     venue: "DSWD ACADEMY",
-    target: "",
+    target: "Local Social Welfare Officers (SDCA Levels 1-2)",
     image: Lad,
     colorId: 5,
     tag: "WITH CPD UNITS"
@@ -864,7 +864,7 @@ const trainingSchedule = [
     startDate: new Date(2026, 6, 7),
     endDate: new Date(2026, 6, 10),
     title: "Trauma Informed Care for Houseparents (TOT)",
-    description: "",
+    description: "This training is designed to equip houseparents with the knowledge and skills necessary to provide trauma-informed care to children and youth in their custody, ensuring a safe and supportive environment for healing and development.",
     venue: "CARAGA",
     target: "Houseparents",
     image: ToT,
@@ -914,7 +914,7 @@ const trainingSchedule = [
     title: "Ladderized 2: Training on Problem Solving and Decision Making",
     description: "This intervention is aligned with the thrust of the DSWD in making LGUs institutional development initiatives a reality in ensuring that delivery systems for SWD services are effective, convergent, and impactful, as envisioned in DSWD Thrusts and Priorities. It also supports the long-term strategic objectives of the DSWD Academy under the SWIDB in fulfilling its mission to build and sustain the capacities of its partners and stakeholders.",
     venue: "DSWD ACADEMY",
-    target: "",
+    target: "Local Social Welfare and Development Offices",
     image: Lad,
     colorId: 5,
     tag: "WITH CPD UNITS"
@@ -1211,10 +1211,10 @@ const trainingSchedule = [
     id: 101,
     startDate: new Date(2026, 2, 22),
     endDate: new Date(2026, 2, 28),
-    title: "Training of Trainers Parent Effectiveness Service (PSWDO)",
+    title: "Training of Trainers: Parent Effectiveness Service Program Facilitators (Batch 2)",
     description: "The Training of Trainers (ToT) on the Parent Effectiveness Service (PES) Program Facilitators equips a nationwide pool of DSWD and LGU technical trainers with the competencies to deliver standardized PES modules, facilitation methodologies, and monitoring mechanisms in line with Republic ACT No. 11908 and its Implementing Rules and Regulations. It strenghtens their capacity to provide technical assistance, train PES facilitators, and ensure consistent, quality implementation of the program across regions, provinces, and municipalities. It also supports effective parenting education and promotes the holistic development and protection of Filipino children and families.",
     venue: "NCR",
-    target: "",
+    target: "Provincial Social Welfare and Development Officers",
     image: PES,
     colorId: 7,
     tag: ""
@@ -1223,10 +1223,10 @@ const trainingSchedule = [
     id: 102,
     startDate: new Date(2026, 2, 22),
     endDate: new Date(2026, 2, 28),
-    title: "Training of Trainers Parent Effectiveness Service (PSWDO)",
+    title: "Training of Trainers: Parent Effectiveness Service Program Facilitators (Batch 3)",
     description: "The Training of Trainers (ToT) on the Parent Effectiveness Service (PES) Program Facilitators equips a nationwide pool of DSWD and LGU technical trainers with the competencies to deliver standardized PES modules, facilitation methodologies, and monitoring mechanisms in line with Republic ACT No. 11908 and its Implementing Rules and Regulations. It strenghtens their capacity to provide technical assistance, train PES facilitators, and ensure consistent, quality implementation of the program across regions, provinces, and municipalities. It also supports effective parenting education and promotes the holistic development and protection of Filipino children and families.",
     venue: "Cagayan de Oro",
-    target: "",
+    target: "Provincial Social Welfare and Development Officers",
     image: PES,
     colorId: 7,
     tag: ""
@@ -1436,7 +1436,10 @@ const Calendar = () => {
   }, [filteredEvents, currentPage]);
 
   const formatDateRange = (start, end) => {
-    return `${start.getDate()}-${end.getDate()} ${start.toLocaleString("en-US", { month: "short" })} ${start.getFullYear()}`;
+    const options = { day: 'numeric', month: 'short' };
+    const startStr = start.toLocaleDateString('en-GB', options);
+    const endStr = end.toLocaleDateString('en-GB', options);
+    return `${startStr} - ${endStr}`;
   };
 
   const { firstDay, daysArray, numRows } = useMemo(() => {
@@ -1565,7 +1568,7 @@ const Calendar = () => {
                   )}
                 </AnimatePresence>
                 <a href="https://sites.google.com/dswd.gov.ph/dswdacademyfaqs2026/faqs" target="_blank" rel="noopener noreferrer" className="bg-[#073763] text-white p-4 rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest shadow-lg">
-                   Frequently Asked Questions
+                    Frequently Asked Questions
                 </a>
               </div>
 
