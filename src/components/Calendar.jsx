@@ -852,9 +852,9 @@ const trainingSchedule = [
     startDate: new Date(2026, 6, 6),
     endDate: new Date(2026, 6, 10),
     title: "Disaster Response and Crisis Management: Women Friendly Spaces",
-    description: "",
+    description: "This training aims to enable participants to design and demonstrate appropriate strategies for the establishment and management of Women-Friendly Spaces in evacuation centers and disaster-affected communities, given case scenarios, operational guidelines, and practical planning exercises based on existing DSWD standards and humanitarian response frameworks, ensuring that interventions are gender-responsive, protective, and aligned with the provisions of DSWD Memorandum Circular No. 06, series of 2015.",
     venue: "DSWD ACADEMY",
-    target: "",
+    target: "LSWDOs, LDRRMOs",
     image: Disaster,
     colorId: 1,
     tag: "WITH CPD UNITS"
