@@ -280,7 +280,7 @@ const trainingSchedule = [
     venue: "CAR",
     target: "HP, Nutritionist, Medical Personnel",
     image: Houseparenting,
-    colorId: 7,
+    colorId: 5,
     tag: ""
   },
   {
@@ -863,7 +863,7 @@ const trainingSchedule = [
     id: 72,
     startDate: new Date(2026, 6, 7),
     endDate: new Date(2026, 6, 10),
-    title: "Trauma Informed Care  for Houseparents (TOT)",
+    title: "Trauma Informed Care for Houseparents (TOT)",
     description: "",
     venue: "CARAGA",
     target: "Houseparents",
@@ -952,7 +952,7 @@ const trainingSchedule = [
     venue: "REGION IX",
     target: "Medical Personnel, Houseparents, MDO",
     image: Random,
-    colorId: 3,
+    colorId: 5,
     tag: ""
   },
   {
