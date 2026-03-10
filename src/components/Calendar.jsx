@@ -900,7 +900,7 @@ const trainingSchedule = [
     startDate: new Date(2026, 6, 14),
     endDate: new Date(2026, 6, 17),
     title: "Life Skills Intervention Sessions for Older Children and Youth",
-    description: "Equips LGU multidisciplinary teams to establish, operationalize, and sustain functional Special Drug Education Centers with a contextualized Manual of Operations.",
+    description: "",
     venue: "REGION X",
     target: "Supervising HP, MDOs",
     image: Random,
