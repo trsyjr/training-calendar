@@ -12,11 +12,23 @@ function App() {
     const trackVisitor = async () => {
       if (window.location.hostname === "localhost") return;
 
-      try {
-        const geoRes = await fetch("https://ipapi.co/json/");
-        const geoData = await geoRes.json();
-        const locationString = `${geoData.city}, ${geoData.country_name}`;
+      // Initialize with a fallback value
+      let locationString = "Unknown / Limit Reached";
 
+      try {
+        // Attempt to fetch location
+        const geoRes = await fetch("https://ipapi.co/json/");
+        if (geoRes.ok) {
+          const geoData = await geoRes.json();
+          locationString = `${geoData.city}, ${geoData.country_name}`;
+        }
+      } catch (e) {
+        // If IPAPI fails or hits 1000 limit, we just log it and move on
+        console.error("Location service limit reached or blocked");
+      }
+
+      try {
+        // This will now run even if the location fetch failed above
         await fetch(TRACKING_URL, {
           method: "POST",
           mode: "no-cors",
@@ -27,7 +39,7 @@ function App() {
           }),
         });
       } catch (e) {
-        console.error("Analytics error:", e);
+        console.error("Google Sheets sync failed:", e);
       }
     };
 
