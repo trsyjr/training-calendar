@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import Calendar from "./components/Calendar";
-import Preloader from "./components/Preloader";
-import MaintenancePage from "./components/MaintenancePage"; // Assuming you saved the previous code here
+import MaintenancePage from "./components/MaintenancePage"; 
 
 const TRACKING_URL = "https://script.google.com/macros/s/AKfycbwxsMZlNqtsHd0_U5twtPuM062RDKeBjr3CJhDBa05TGhoyz48kF4TqezAr-KZd6P4/exec";
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  // Set to false initially since there's no preloader screen to wait on
+  const [loading, setLoading] = useState(false);
 
   // --- TOGGLE THIS TO SWITCH BETWEEN MODES ---
-  const isUnderDevelopment = true; 
+  const isUnderDevelopment = false; 
   // -------------------------------------------
 
   useEffect(() => {
@@ -51,32 +51,13 @@ function App() {
     trackVisitor();
   }, []); 
 
-  useEffect(() => {
-    const handleLoad = () => {
-      // Small delay to ensure the preloader feels smooth
-      setTimeout(() => setLoading(false), 2000);
-    };
-
-    if (document.readyState === "complete") {
-      handleLoad();
-    } else {
-      window.addEventListener("load", handleLoad);
-      return () => window.removeEventListener("load", handleLoad);
-    }
-  }, []);
-
   return (
     <div className="relative">
       <AnimatePresence mode="wait">
-        {loading ? (
-          <Preloader key="loader" />
+        {isUnderDevelopment ? (
+          <MaintenancePage key="maintenance" />
         ) : (
-          /* Once loading is finished, check if we show Maintenance or the App */
-          isUnderDevelopment ? (
-            <MaintenancePage key="maintenance" />
-          ) : (
-            <Calendar key="calendar" />
-          )
+          <Calendar key="calendar" />
         )}
       </AnimatePresence>
     </div>

@@ -1,7 +1,9 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BsPeopleFill, BsSearch, BsCalendar3, BsListUl, BsGeoAltFill, BsChevronLeft, BsChevronRight, BsChevronDown} from "react-icons/bs";
+import { BsPeopleFill, BsSearch, BsCalendar3, BsListUl, BsGeoAltFill, BsChevronLeft, BsChevronRight, BsChevronDown, BsArrowClockwise } from "react-icons/bs";
 import { IoClose } from "react-icons/io5"; 
+import Preloader from "./Preloader"; // IMPORTING YOUR PRELOADER COMPONENT
+
 import DABuilding from "../assets/DABuilding.jpeg";
 import PMC from "../assets/PMC.JPG";
 import PES from "../assets/PES.png";
@@ -21,1337 +23,45 @@ import BPLogo from "../assets/BPLogo.png";
 const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const trainingCategories = {
-  1: "Disaster Response Trainings",
+  1: "Training on Family",
   2: "DSWD Academy Functionality Trainings",
   3: "SDCA Functionality",
   4: "Sectoral Development Programs Trainings",
   5: "Social Welfare and Development Agencies Trainings",
   6: "Training on Community-based Programs",
-  7: "Training on Family"
+  7: "Disaster Response Trainings"
 };
 
-const trainingSchedule = [
-  {
-    id: 1,
-    startDate: new Date(2026, 0, 12),
-    endDate: new Date(2026, 0, 16),
-    title: "(Localized) Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "National Capital Region",
-    target: "Local Government Units",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-{
-    id: 2,
-    startDate: new Date(2026, 0, 19),
-    endDate: new Date(2026, 0, 23),
-    title: "(Localized) Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "AJ Hi-Time Hotel, Kidapawan City",
-    target: "Local Government Units",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 3,
-    startDate: new Date(2026, 1, 2),
-    endDate: new Date(2026, 1, 6),
-    title: "(Localized) Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "E-Crown Hotel, Virac, Catanduanes",
-    target: "Local Government Units",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 4,
-    startDate: new Date(2026, 1, 9),
-    endDate: new Date(2026, 1, 13),
-    title: "(Localized) Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "Carmona, Cavite",
-    target: "Local Government Units",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 5,
-    startDate: new Date(2026, 1, 9),
-    endDate: new Date(2026, 1, 13),
-    title: "(Localized) Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "Taytay, Rizal",
-    target: "Local Government Units",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 6,
-    startDate: new Date(2026, 1, 23),
-    endDate: new Date(2026, 1, 27),
-    title: "Training on Pre-Marriage Counseling (Batch 1)",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "DSWD ACADEMY",
-    target: "Local Social Welfare and Development Officers",
-    image: PMC,
-    colorId: 7,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 7,
-    startDate: new Date(2026, 1, 23),
-    endDate: new Date(2026, 1, 27),
-    title: "(Localized) Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "Tourism Pavillion, Bataan",
-    target: "Local Government Units",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 8,
-    startDate: new Date(2026, 2, 8),
-    endDate: new Date(2026, 2, 14),
-    title: "Training of Trainers: Parent Effectiveness Service Program Facilitators",
-    description: "The Training of Trainers (ToT) on the Parent Effectiveness Service (PES) Program Facilitators equips a nationwide pool of DSWD and LGU technical trainers with the competencies to deliver standardized PES modules, facilitation methodologies, and monitoring mechanisms.",
-    venue: "The Orchard Hotel, Baguio City",
-    target: "Field Offices, Program Facilitators",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 9,
-    startDate: new Date(2026, 2, 23),
-    endDate: new Date(2026, 2, 27),
-    title: "Roll Out of Mental Health and Well Being Module",
-    description: "The rollout of these five modules is being undertaken to ensure that Mental Health and Wellbeing Focals and Center Heads of CRCFs are aligned and in sync in delivering consistent, responsive, and quality support services to their staff. By grounding both leadership and focal persons in the same framework—covering compassion and empathy, supportive work environments, burnout prevention, leadership for well-being, and resilience—the initiative promotes a unified understanding of mental health priorities, strategies, and interventions across centers. This alignment strengthens coordination, clarifies roles, and fosters shared accountability, ultimately ensuring that efforts to support staff well-being are coherent, collaborative, and effectively implemented at all levels of center operation",
-    venue: "REGION VI",
-    target: "Center Heads, RCC",
-    image: Rollout,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 10,
-    startDate: new Date(2026, 2, 23),
-    endDate: new Date(2026, 2, 27),
-    title: "Foundational Course on Women, Peace, and Security for GAD Focal Persons",
-    description: "The training will produce a comprehensive suite of professional outputs, including a shared learning agenda that highlights surfaced practice dilemmas, completed conflict analysis and GRCA matrices, and intervention analysis templates. Furthermore, participants will generate enhanced intervention designs informed by Peace and Conflict Impact Assessments (PCIA), alongside detailed action plans and draft practice-level indicators to ensure measurable implementation",
-    venue: "DSWD ACADEMY",
-    target: "Gender and Development Focal Persons",
-    image: Random,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 11,
-    startDate: new Date(2026, 2, 25),
-    endDate: new Date(2026, 2, 27),
-    title: "Operational Planning Workshop 2026",
-    description: "",
-    venue: "DSWD ACADEMY",
-    target: "",
-    image: Random,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 12,
-    startDate: new Date(2026, 3, 14),
-    endDate: new Date(2026, 3, 17),
-    title: "Phronetic Leadership Training",
-    description: "The  Phronetic Leadership Traiining is rooted in Aristotle’s concept of phronesis (practical wisdom) and emphasizing ethical judgment, contextual decision-making, and values-driven leadership, will be beneficial to leaders and middle managers at DSWD. Considering today’s complex and uncertain environments, leaders need not only technical expertise and theoretical knowledge but also wisdom in applying values, intuition, and experience to guide people and organizations toward sustainable success. This 3-day activity is designed to immerse participants in the principles and practices of phronetic leadership, equipping them to become reflective, ethical, and action-oriented leaders.",
-    venue: "DSWD ACADEMY",
-    target: "RSIDG MANCOM, Senior Chiefs, Senior Technical Staff ",
-    image: Random,
-    colorId: 5,
-    tag: ""
-  },
-    {
-    id: 13,
-    startDate: new Date(2026, 3, 19),
-    endDate: new Date(2026, 3, 25),
-    title: "Training of Trainers on Houseparenting",
-    description: "This Training of Trainers on Houseparenting builds a sustainable pool of skilled Social Workers and allied professionals who can effectively cascade standardized, rights-based, and trauma-informed houseparenting practices nationwide to ensure safe, nurturing, and developmentally supportive care for children in residential facilities.",
-    venue: "DSWD ACADEMY",
-    target: "",
-    image: Houseparenting,
-    colorId: 7,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 14,
-    startDate: new Date(2026, 3, 19),
-    endDate: new Date(2026, 3, 24),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "CAR",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 15,
-    startDate: new Date(2026, 3, 19),
-    endDate: new Date(2026, 3, 24),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION VI",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 16,
-    startDate: new Date(2026, 3, 19),
-    endDate: new Date(2026, 3, 24),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION IX",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 17,
-    startDate: new Date(2026, 3, 19),
-    endDate: new Date(2026, 3, 24),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION X",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 18,
-    startDate: new Date(2026, 3, 19),
-    endDate: new Date(2026, 3, 24),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "CARAGA",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 19,
-    startDate: new Date(2026, 3, 20),
-    endDate: new Date(2026, 3, 24),
-    title: "Training of Trainers for Training on Pre-Marriage Counseling",
-    description: "This Training of Trainers equips a nationwide pool of expert facilitators with mastery of the updated, standardized Pre-Marriage Counseling (PMC) competencies and training methodologies to ensure LGUs’ full compliance with national standards and sustain high-quality PMC implementation across all regions.",
-    venue: "DSWD ACADEMY",
-    target: "Core Group of Specialists",
-    image: PMC,
-    colorId: 7,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 20,
-    startDate: new Date(2026, 9, 27),
-    endDate: new Date(2026, 9, 30),
-    title: "TOT of Training Manual for Caregivers on Handling Persons with Disabilities Needing Long-Term Residential Care",
-    description: "This training program enhances the competencies of caseworkers in adopting GRCM, ensuring a more inclusive and empathetic response to the needs of GBV survivors.",
-    venue: "REGION I",
-    target: "Supervising Social Welfare, Supervising Houseparents",
-    image: ToT,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 21,
-    startDate: new Date(2026, 3, 27),
-    endDate: new Date(2026, 4,  1),
-    title: "Rollout on Modules on Nutrition Care Process Capacity Building for Houseparents in DSWD Residential Care Facilities for Children  and Youth",
-    description: "This activity will enable House parents and other relevant personnel of residential care facilities for children and youth apply the  ethical, cultural, and evidence-based approaches to nutrition care delivery ",
-    venue: "CAR",
-    target: "Houseparents, Nutritionist, Medical Personnel",
-    image: Houseparenting,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 22,
-    startDate: new Date(2026, 4, 3),
-    endDate: new Date(2026, 4, 8),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "NCR",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 23,
-    startDate: new Date(2026, 4, 3),
-    endDate: new Date(2026, 4, 8),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION II",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 24,
-    startDate: new Date(2026, 4, 3),
-    endDate: new Date(2026, 4, 8),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION XII",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 25,
-    startDate: new Date(2026, 4, 3),
-    endDate: new Date(2026, 4, 8),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION III",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 26,
-    startDate: new Date(2026, 4, 3),
-    endDate: new Date(2026, 4, 8),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION V",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 27,
-    startDate: new Date(2026, 4, 3),
-    endDate: new Date(2026, 4, 8),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "CALABARZON",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 28,
-    startDate: new Date(2026, 4, 5),
-    endDate: new Date(2026, 4, 8),
-    title: "4Ps RPC Conference (1st sem)",
-    description: "",
-    venue: "REGION XI",
-    target: "",
-    image: Fourps,
-    colorId: 3,
-    tag: ""
-  },
-  {
-    id: 29,
-    startDate: new Date(2026, 4, 5),
-    endDate: new Date(2026, 4, 8),
-    title: "Rollout of Training Manual on Basic Psychological Strategies",
-    description: "",
-    venue: "REGION VIII",
-    target: "Social Worker, Psychometrician, Houseparents, MO",
-    image: Rollout,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 30,
-    startDate: new Date(2026, 4, 6),
-    endDate: new Date(2026, 4, 8),
-    title: "Internal Training for Administrative Staff",
-    description: "This training is designed to enhance efficiency, accuracy, and confidence among administrative personnel while reinforcing their critical role in public service delivery. Equipped with the new set of skills, they will be able to perform their tasks more productively, effectively, and efficiently, leading to better individual and organizational performance and quality service delivery.",
-    venue: "DSWD ACADEMY",
-    target: "DSWD Academy Administrative and Technical Staff",
-    image: Random,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 31,
-    startDate: new Date(2026, 4, 10),
-    endDate: new Date(2026, 4, 15),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "CAR",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 32,
-    startDate: new Date(2026, 4, 10),
-    endDate: new Date(2026, 4, 15),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION XII",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 33,
-    startDate: new Date(2026, 4, 10),
-    endDate: new Date(2026, 4, 15),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION VII",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 34,
-    startDate: new Date(2026, 4, 10),
-    endDate: new Date(2026, 4, 15),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "MIMAROPA",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 36,
-    startDate: new Date(2026, 4, 10),
-    endDate: new Date(2026, 4, 15),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION IX",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 37,
-    startDate: new Date(2026, 4, 10),
-    endDate: new Date(2026, 4, 15),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION XII",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 38,
-    startDate: new Date(2026, 4, 11),
-    endDate: new Date(2026, 4, 15),
-    title: "TOT of the Facilitator’s Manual for Social Work Case Management for CANE+D Children in Center and Residential Care Facilities: A Training  Course for CRCF Social Workers",
-    description: "This training of trainers will be done in order to equip the future trainers and facilitators of the Case Management for CANE+D Children in Center and Residential Care Facilities Training.  It will review basic principles of adult learning as well as go through the entire training course.  ",
-    venue: "REGION X",
-    target: "Center Head, Supervising Social Worker",
-    image: ToT,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 39,
-    startDate: new Date(2026, 4, 11),
-    endDate: new Date(2026, 4, 15),
-    title: "Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "DSWD ACADEMY",
-    target: "Local Social Welfare and Development Officers",
-    image: PMC,
-    colorId: 7,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 40,
-    startDate: new Date(2026, 4, 17),
-    endDate: new Date(2026, 4, 22),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION VIII",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 41,
-    startDate: new Date(2026, 4, 17),
-    endDate: new Date(2026, 4, 22),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION III",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 42,
-    startDate: new Date(2026, 4, 17),
-    endDate: new Date(2026, 4, 22),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "CALABARZON",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 43,
-    startDate: new Date(2026, 4, 17),
-    endDate: new Date(2026, 4, 22),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION XIII",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 44,
-    startDate: new Date(2026, 4, 19),
-    endDate: new Date(2026, 4, 22),
-    title: "TOT of training manual on Parenting  LGBTQ+ Residents in DSWD Centers and Residential Care Facilities: Creating a Safe, Affirming and Inclusive Environment",
-    description: "It aims to strengthen the knowledge, attitudes, and facilitation skills of caregivers and service providers in supporting LGBTQ+ residents in DSWD centers and residential care facilities. It equips trainers with practical, gender-responsive and trauma-informed approaches to guide parenting and caregiving practices that promote safety, dignity, and inclusion.",
-    venue: "REGION IX",
-    target: "Center Head, Supervising SW, SW, Supervising HP, Teacher, Psychometrician,Psychologists",
-    image: ToT,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 45,
-    startDate: new Date(2026, 4, 24),
-    endDate: new Date(2026, 4, 29),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION II",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 46,
-    startDate: new Date(2026, 4, 24),
-    endDate: new Date(2026, 4, 29),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION X",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 47,
-    startDate: new Date(2026, 4, 24),
-    endDate: new Date(2026, 4, 29),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "MIMAROPA",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 48,
-    startDate: new Date(2026, 4, 24),
-    endDate: new Date(2026, 4, 29),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION V",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 49,
-    startDate: new Date(2026, 4, 24),
-    endDate: new Date(2026, 4, 29),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION I",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 50,
-    startDate: new Date(2026, 4, 26),
-    endDate: new Date(2026, 4, 29),
-    title: "Rollout of the Facilitator’s Manual for Social Work Case Management for CANE+D Children in Center and Residential Care Facilities: A Training  Course for CRCF Social Workers",
-    description: "DSWD CRCF social workers in participating centers will be able to consistently apply responsive, child-centered, and protocol-based case management practices for children who have experienced Child Abuse, Neglect, Exploitation, and Discrimination (CANE+D), ensuring timely and appropriate care and interventions.",
-    venue: "REGION V",
-    target: "Center Head, Supervising Social Worker",
-    image: Rollout,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 51,
-    startDate: new Date(2026, 4, 31),
-    endDate: new Date(2026, 5, 5),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION VIII",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 52,
-    startDate: new Date(2026, 4, 31),
-    endDate: new Date(2026, 5, 5),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION XI",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 53,
-    startDate: new Date(2026, 4, 31),
-    endDate: new Date(2026, 5, 5),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION III",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 54,
-    startDate: new Date(2026, 4, 31),
-    endDate: new Date(2026, 5, 5),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "CALABARZON",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 56,
-    startDate: new Date(2026, 4, 31),
-    endDate: new Date(2026, 5, 5),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION VI",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 57,
-    startDate: new Date(2026, 4, 31),
-    endDate: new Date(2026, 5, 5),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "NIR",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 58,
-    startDate: new Date(2026, 5, 1),
-    endDate: new Date(2026, 5, 5),
-    title: "Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "DSWD ACADEMY",
-    target: "Local Social Welfare and Development Officers",
-    image: PMC,
-    colorId: 7,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 58,
-    startDate: new Date(2026, 5, 1),
-    endDate: new Date(2026, 5, 5),
-    title: "Training on Pre-Marriage Counseling (Region V)",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "DSWD ACADEMY",
-    target: "Local Social Welfare and Development Officers",
-    image: PMC,
-    colorId: 7,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 60,
-    startDate: new Date(2026, 5, 1),
-    endDate: new Date(2026, 5, 5),
-    title: "Upskilling on Social Work Counseling: Counseling Competencies for Today’s Social Worker Batch 1",
-    description: "This training equips DSWD CRCF social workers with essential counseling competencies to effectively assess and support vulnerable and high-need clients in both in-person and remote settings. Participants will strengthen their key counseling skills, ethical decision-making, and cultural competence while applying trauma-informed and client-centered approaches in diverse practice situations. The program also emphasizes practical self-care strategies to help social workers manage stress, prevent burnout, and sustain professional effectiveness in demanding work environments.",
-    venue: "REGION VII",
-    target: "Supervising Social Worker, Social Workers",
-    image: Upskill,
-    colorId: 5,
-    tag: ""
-  },
-    {
-    id: 61,
-    startDate: new Date(2026, 5, 8),
-    endDate: new Date(2026, 5, 11),
-    title: "Upskilling on Strategic Communications",
-    description: "This Upskilling Program on Strategic Communication is designed for CRCF Center Heads and Supervising Social Workers to strengthen their communication and leadership skills in managing teams and engaging stakeholders. It enhances their ability to deliver clear messages, handle difficult conversations, and manage conflict effectively, especially in sensitive and high-pressure situations. The program equips participants with practical strategies to promote collaboration, transparency, and effective service delivery within their centers.",
-    venue: "CARAGA",
-    target: "Center Head, Supervising Social Worker",
-    image: Upskill,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 62,
-    startDate: new Date(2026, 5, 14),
-    endDate: new Date(2026, 5, 19),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION VII",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 63,
-    startDate: new Date(2026, 5, 14),
-    endDate: new Date(2026, 5, 19),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION VIII",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 64,
-    startDate: new Date(2026, 5, 14),
-    endDate: new Date(2026, 5, 19),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION I",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 65,
-    startDate: new Date(2026, 5, 14),
-    endDate: new Date(2026, 5, 19),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "NIR",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 66,
-    startDate: new Date(2026, 5, 16),
-    endDate: new Date(2026, 5, 19),
-    title: "Rollout of training manual on Parenting  LGBTQ+ Residents in DSWD Centers and Residential Care Facilities: Creating a Safe, Affirming and Inclusive Environment",
-    description: "This program equips participants with essential skills to create affirming, safe, and inclusive environments where LGBTQIA+ residents feel cared for, valued, and protected",
-    venue: "REGION X",
-    target: "Social Worker, Psychometrician, MO",
-    image: Rollout,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 67,
-    startDate: new Date(2026, 5, 21),
-    endDate: new Date(2026, 5, 26),
-    title: "Rollout Parent Effectiveness Service",
-    description: "The Roll-Out Training on the Parent Effectiveness Service (PES) is designed for the facilitators who will directly conduct all the sessions with parents in their respective communities. It equips them with the knowledge, skills, and standardized tools needed to effectively deliver the PES modules in line with Republic Act No. 11908 and its Implementing Rules and Regulations.",
-    venue: "REGION I",
-    target: "Local Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 68,
-    startDate: new Date(2026, 5, 21),
-    endDate: new Date(2026, 5, 27),
-    title: "Training on Houseparenting",
-    description: "This training aims to improve the competencies of houseparents, as frontline service providers, in handling and managing children under their care.",
-    venue: "DSWD ACADEMY",
-    target: "DSWD Field Offices, Social Welfare and Development Agencies and LGU-managed Centers/Residential Care Facilities' Houseparents",
-    image: Houseparenting,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 69,
-    startDate: new Date(2026, 5, 29),
-    endDate: new Date(2026, 6, 3),
-    title: "Ladderized 1: Training on Leadership and Management for Local Social Welfare and Development Officers: Catalysts for Change",
-    description: "The Leadership Training for Local Social Welfare and Development Officers (LSWDOs) is designed to build the essential skills, knowledge, and mindset required for effective leadership in social welfare programs. This training equips LSWDOs to navigate policy changes, manage resources, lead teams, and respond to various community challenges. Through a focus on ethical leadership, accountability, emotional intelligence, decision-making, and problem-solving, the program enhances their  capacity to deliver impactful services. It also promotes stakeholder collaboration to ensure more efficient service delivery and greater community impact. By empowering LSWDOs to advocate for marginalized populations, promote social justice.  mentor future leaders, and design sustainable, inclusive programs, the training contributes to the long-term well-being and development of the communities they serve.",
-    venue: "DSWD ACADEMY",
-    target: "Local Social Welfare Officers (SDCA Levels 1-2)",
-    image: Lad,
-    colorId: 5,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 70,
-    startDate: new Date(2026, 5, 29),
-    endDate: new Date(2026, 6, 3),
-    title: "Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "DSWD ACADEMY",
-    target: "Local Social Welfare and Development Officers",
-    image: PMC,
-    colorId: 7,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 71,
-    startDate: new Date(2026, 6, 6),
-    endDate: new Date(2026, 6, 10),
-    title: "Disaster Response and Crisis Management: Women Friendly Spaces",
-    description: "This training aims to enable participants to design and demonstrate appropriate strategies for the establishment and management of Women-Friendly Spaces in evacuation centers and disaster-affected communities, given case scenarios, operational guidelines, and practical planning exercises based on existing DSWD standards and humanitarian response frameworks, ensuring that interventions are gender-responsive, protective, and aligned with the provisions of DSWD Memorandum Circular No. 06, series of 2015.",
-    venue: "DSWD ACADEMY",
-    target: "LSWDOs, LDRRMOs",
-    image: Disaster,
-    colorId: 1,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 72,
-    startDate: new Date(2026, 6, 7),
-    endDate: new Date(2026, 6, 10),
-    title: "Trauma Informed Care for Houseparents (TOT)",
-    description: "This training is designed to equip houseparents with the knowledge and skills necessary to provide trauma-informed care to children and youth in their custody, ensuring a safe and supportive environment for healing and development.",
-    venue: "CARAGA",
-    target: "Houseparents",
-    image: ToT,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 73,
-    startDate: new Date(2026, 6, 13),
-    endDate: new Date(2026, 6, 17),
-    title: "Certificate Course on Gender Responsive Case Management",
-    description: "This training program is designed to enhance the competencies of caseworkers in adopting GRCM, ensuring a more inclusive and empathetic response to the needs of GBV survivors. By equipping practitioners with the knowledge and tools to implement GRCM, through creating a supportive environment for survivors of GBV, upholding their dignity and human rights, and empowering social workers to deliver meaningful and impactful case management services, the training reinforces institutional mandates while fostering a collaborative approach involving LGUs, NGOs, and other stakeholders.",
-    venue: "DSWD ACADEMY",
-    target: "",
-    image: Random,
-    colorId: 5,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 74,
-    startDate: new Date(2026, 6, 13),
-    endDate: new Date(2026, 6, 17),
-    title: "Disaster Response and Crisis Management: Psychological First Aid Training for Local Social Welfare Development Officers",
-    description: "This Psychological First Aid Training strengthens the capacity of Local Social Welfare and Development Officers to act as psychological first responders by equipping them with essential skills to provide timely, ethical, and effective psychosocial support to disaster-affected individuals and families, promoting emotional recovery, resilience, and access to appropriate services during crises.",
-    venue: "DSWD ACADEMY",
-    target: "",
-    image: Disaster,
-    colorId: 8,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 75,
-    startDate: new Date(2026, 6, 14),
-    endDate: new Date(2026, 6, 17),
-    title: "Life Skills Intervention Sessions for Older Children and Youth",
-    description: "",
-    venue: "REGION X",
-    target: "Supervising HP, MDOs",
-    image: Random,
-    colorId: 5,
-    tag: ""
-  },
-    {
-    id: 76,
-    startDate: new Date(2026, 6, 27),
-    endDate: new Date(2026, 6, 31),
-    title: "Ladderized 2: Training on Problem Solving and Decision Making",
-    description: "This intervention is aligned with the thrust of the DSWD in making LGUs institutional development initiatives a reality in ensuring that delivery systems for SWD services are effective, convergent, and impactful, as envisioned in DSWD Thrusts and Priorities. It also supports the long-term strategic objectives of the DSWD Academy under the SWIDB in fulfilling its mission to build and sustain the capacities of its partners and stakeholders.",
-    venue: "DSWD ACADEMY",
-    target: "Local Social Welfare and Development Offices",
-    image: Lad,
-    colorId: 5,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 77,
-    startDate: new Date(2026, 6, 27),
-    endDate: new Date(2026, 6, 31),
-    title: "Training on Online Sexual Abuse or Exploitation of Children",
-    description: "The Basic Course on Anti-Online Sexual Abuse and Exploitation of Children (OSAEC) and Child Sexual Abuse and Exploitation Materials (CSAEM) for Multi-Disciplinary Teams (MDTs) is designed to strengthen the capacity of frontline responders from Local Government Units (LGUs) in addressing cases of online child sexual abuse and exploitation. This course provides participants with a comprehensive understanding of the global and local context of OSAEC. It willl equip MDT members with practical skills in case identification, reporting, referral pathways, Psychological First Aid (PFA), inter-agency coordination, and self-care strategies.",
-    venue: "DSWD ACADEMY",
-    target: "",
-    image: Random,
-    colorId: 5,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 78,
-    startDate: new Date(2026, 6, 28),
-    endDate: new Date(2026, 6, 31),
-    title: "Pilot Test of Training Manual on Basic Psychological Strategies",
-    description: "This training is designed to equip caregivers and frontline child service providers with the essential knowledge, skills, and mindset to deliver responsive and compassionate psychological support to children and adolescents facing emotional or behavioral challenges.",
-    venue: "CAR",
-    target: "Pilot Test of Training Manual on Basic Psychological Strategies	Social Worker, Psychometrician, Houseparents, MO",
-    image: Pilot,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 79,
-    startDate: new Date(2026, 7, 4),
-    endDate: new Date(2026, 7, 7),
-    title: "Basic Life Support Skills Sessions",
-    description: "",
-    venue: "REGION IX",
-    target: "Medical Personnel, Houseparents, MDO",
-    image: Random,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 80,
-    startDate: new Date(2026, 7, 9),
-    endDate: new Date(2026, 7, 15),
-    title: "Training on Houseparenting",
-    description: "This training aims to improve the competencies of houseparents, as frontline service providers, in handling and managing children under their care.",
-    venue: "DSWD ACADEMY",
-    target: "DSWD Field Offices, Social Welfare and Development Agencies and LGU-managed Centers/Residential Care Facilities' Houseparents",
-    image: Houseparenting,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 81,
-    startDate: new Date(2026, 7, 10),
-    endDate: new Date(2026, 7, 14),
-    title: "ToT on Case Management for CAR and CICL",
-    description: "",
-    venue: "DSWD ACADEMY",
-    target: "",
-    image: ToT,
-    colorId: 5,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 82,
-    startDate: new Date(2026, 7, 25),
-    endDate: new Date(2026, 7, 28),
-    title: "Rollout of Training Manual on Basic Psychological Strategies",
-    description: "",
-    venue: "REGION VIII",
-    target: "Social Worker, Psychometrician, Houseparents, MO",
-    image: Rollout,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 83,
-    startDate: new Date(2026, 8, 7),
-    endDate: new Date(2026, 8, 11),
-    title: "Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "DSWD ACADEMY",
-    target: "Local Social Welfare and Development Officers",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 84,
-    startDate: new Date(2026, 8, 14),
-    endDate: new Date(2026, 8, 18),
-    title: "Training on Yakap Bayan Program",
-    description: "",
-    venue: "DSWD ACADEMY",
-    target: "",
-    image: Random,
-    colorId: 6,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 85,
-    startDate: new Date(2026, 8, 15),
-    endDate: new Date(2026, 8, 18),
-    title: "Upskilling on Houseparenting Standards for Houseparents (10 Modules)",
-    description: "",
-    venue: "REGION VII",
-    target: "Houseparents, Supervising Houseparents",
-    image: Upskill,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 86,
-    startDate: new Date(2026, 8, 21),
-    endDate: new Date(2026, 8, 25),
-    title: "Training on ASO Tool",
-    description: "",
-    venue: "DSWD ACADEMY",
-    target: "Houseparents, Supervising HP",
-    image: Random,
-    colorId: 3,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 87,
-    startDate: new Date(2026, 8, 28),
-    endDate: new Date(2026, 9, 2),
-    title: "Ladderized 3: Training on Results - Based Monitoring and Evaluation for Local Social Welfare and Development Officers",
-    description: "The “Training on Results - Based Monitoring and Evaluation” (RBME) aims to build the knowledge and skills of LGU staffers along monitoring and evaluation leading towards establishment of RBME system that can serve as a tool to improve the way the LGU implements its programs. The system may also show if programs produced its intended results. A functional RBME system will ensure that policies, programs and projects are anchored on a solid knowledge base that can support the organization towards achievement of set goals leading to an improved performance and service delivery. In the long run, it can also serve as a reference tool to examine the outcomes and impacts and answer the “so what” questions being expected by stakeholders. The target participants for this training are LSWDOs/MSWDOs. The five (5) day activity will be conducted in person on a face-to-face platform. Most of the discussion shall have an equivalent workshop component to ensure understanding and application learnings. This course will cover 2 modules with 11 topics divided in each module and 4 workshops. Moreover, this training shall serve as the Level 1 in strengthening knowledge and skills of LGU implementers along monitoring and evaluation. ",
-    venue: "DSWD ACADEMY",
-    target: "Local Social Welfare and Development Officers (SDCA Level 1-2)",
-    image: Lad,
-    colorId: 5,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 88,
-    startDate: new Date(2026, 8, 28),
-    endDate: new Date(2026, 9, 2),
-    title: "Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "DSWD ACADEMY",
-    target: "Local Social Welfare and Development Officers",
-    image: PMC,
-    colorId: 7,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 89,
-    startDate: new Date(2026, 9, 5),
-    endDate: new Date(2026, 9, 9),
-    title: "Disaster Response and Crisis Management: Child Friendly Spaces",
-    description: "A training program on creating safe, child-friendly spaces during disasters to protect and support children’s safety, well-being, and recovery.",
-    venue: "DSWD ACADEMY",
-    target: "Local Social Welfare and Development Officers",
-    image: Disaster,
-    colorId: 1,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 90,
-    startDate: new Date(2026, 9, 5),
-    endDate: new Date(2026, 9, 9),
-    title: "Training on Special Drug Education Center for LGU Implementers",
-    description: "The training aims to equip LGU multidisciplinary teams with the knowledge, competencies, and standards necessary to establish, operationalize, and sustain a functional Special Drug Education Center in their respective localities. Central to this objective is the guided development of a contextualized SDEC Manual of Operations, which will serve as a reference for compliance with standards, operational continuity, and readiness for accreditation and inclusion in ADAC Functionality Audits and the Seal of Good Local Governance (SGLG).",
-    venue: "DSWD ACADEMY",
-    target: "",
-    image: Random,
-    colorId: 5,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 91,
-    startDate: new Date(2026, 9, 12),
-    endDate: new Date(2026, 9, 16),
-    title: "Upskilling on Social Work Counseling: Counseling Competencies for Today’s Social Worker Batch 2",
-    description: "This training equips DSWD CRCF social workers with essential counseling competencies to effectively assess and support vulnerable and high-need clients in both in-person and remote settings. Participants will strengthen their key counseling skills, ethical decision-making, and cultural competence while applying trauma-informed and client-centered approaches in diverse practice situations. The program also emphasizes practical self-care strategies to help social workers manage stress, prevent burnout, and sustain professional effectiveness in demanding work environments.",
-    venue: "CARAGA",
-    target: "Supervising Social Workers, Social Workers",
-    image: Upskill,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 92,
-    startDate: new Date(2026, 9, 19),
-    endDate: new Date(2026, 9, 23),
-    title: "Gender Responsive Case Management (6 modules)",
-    description: "This training program is designed to enhance the competencies of caseworkers in adopting GRCM, ensuring a more inclusive and empathetic response to the needs of GBV survivors. By equipping practitioners with the knowledge and tools to implement GRCM, through creating a supportive environment for survivors of GBV, upholding their dignity and human rights, and empowering social workers to deliver meaningful and impactful case management services, the training reinforces institutional mandates while fostering a collaborative approach involving LGUs, NGOs, and other stakeholders.",
-    venue: "REGION XII",
-    target: "Center Head, Supervising Social Worker, Social Workers, MDO, Psychometrician, Psychologists, Houseparents",
-    image: Random,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 93,
-    startDate: new Date(2026, 9, 19),
-    endDate: new Date(2026, 9, 23),
-    title: "Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "DSWD ACADEMY",
-    target: "Local Social Welfare and Development Officers",
-    image: PMC,
-    colorId: 7,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 94,
-    startDate: new Date(2026, 9, 20),
-    endDate: new Date(2026, 9, 23),
-    title: "4Ps RPC Conference (2nd sem)",
-    description: "",
-    venue: "MIMAROPA",
-    target: "",
-    image: Fourps,
-    colorId: 3,
-    tag: ""
-  },
-  {
-    id: 95,
-    startDate: new Date(2026, 10, 9),
-    endDate: new Date(2026, 10, 13),
-    title: "Training on Financial Education: Mitigating Socio-Economic Challenges of Clients through Financial Education for Social Workers",
-    description: "",
-    venue: "DSWD ACADEMY",
-    target: "",
-    image: Random,
-    colorId: 5,
-    tag: "WITH CPD UNITS"
-  },
-  {
-    id: 96,
-    startDate: new Date(2026, 9, 26),
-    endDate: new Date(2026, 9, 30),
-    title: "Buklod Paglaom",
-    description: "",
-    venue: "DSWD ACADEMY",
-    target: "",
-    image: Random,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 97,
-    startDate: new Date(2026, 10, 10),
-    endDate: new Date(2026, 10, 13),
-    title: "Rollout of Training Manual for Caregivers on Handling Persons with Disabilities Needing Long-Term Residential Care",
-    description: "This program equips selected CRCF MDTs with essential skills to create affirming, safe, and inclusive environments where LGBTQIA+ residents feel cared for, valued, and protected",
-    venue: "REGION IX",
-    target: "Houseparents, Social Worker, Psychometrician, Psychologists",
-    image: Rollout,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 98,
-    startDate: new Date(2026, 5, 22),
-    endDate: new Date(2026, 5, 26),
-    title: "Tentative Training on Houseparenting PSWDO Cavite",
-    description: "This training aims to improve the competencies of houseparents, as frontline service providers, in handling and managing children under their care.",
-    venue: "Tentative",
-    target: "",
-    image: Houseparenting,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 99,
-    startDate: new Date(2026, 2, 10),
-    endDate: new Date(2026, 2, 13),
-    title: "Pilot Implementation of the training manual on Parenting  LGBTQ+ Residents in DSWD Centers and Residential Care Facilities: Creating a Safe, Affirming and Inclusive Environment",
-    description: "This program equips selected CRCF MDTs with essential skills to create affirming, safe, and inclusive environments where LGBTQIA+ residents feel cared for, valued, and protected",
-    venue: "REGION VI",
-    target: "Supervising SW, HP, Teacher, Psychometrician, Psychologists",
-    image: Pilot,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 100,
-    startDate: new Date(2026, 2, 16),
-    endDate: new Date(2026, 2, 20),
-    title: "Training of Trainers on Modules on Nutrition Care Process Capacity Building for Houseparents in DSWD Residential Care Facilities for Children  and Youth",
-    description: "To equip the DSWD trainers  with instructional, supervisory, and evaluative skills for nutrition capacity building on implementing the Nutrition Care Process (NCP) to improve the nutritional status of children and youth in residential facilities.",
-    venue: "MIMAROPA",
-    target: "Supervising HP, Nutritionist, Medical Personnel",
-    image: ToT,
-    colorId: 5,
-    tag: ""
-  },
-  {
-    id: 101,
-    startDate: new Date(2026, 2, 22),
-    endDate: new Date(2026, 2, 28),
-    title: "Training of Trainers: Parent Effectiveness Service Program Facilitators (Batch 2)",
-    description: "The Training of Trainers (ToT) on the Parent Effectiveness Service (PES) Program Facilitators equips a nationwide pool of DSWD and LGU technical trainers with the competencies to deliver standardized PES modules, facilitation methodologies, and monitoring mechanisms in line with Republic ACT No. 11908 and its Implementing Rules and Regulations. It strenghtens their capacity to provide technical assistance, train PES facilitators, and ensure consistent, quality implementation of the program across regions, provinces, and municipalities. It also supports effective parenting education and promotes the holistic development and protection of Filipino children and families.",
-    venue: "NCR",
-    target: "Provincial Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 102,
-    startDate: new Date(2026, 2, 22),
-    endDate: new Date(2026, 2, 28),
-    title: "Training of Trainers: Parent Effectiveness Service Program Facilitators (Batch 3)",
-    description: "The Training of Trainers (ToT) on the Parent Effectiveness Service (PES) Program Facilitators equips a nationwide pool of DSWD and LGU technical trainers with the competencies to deliver standardized PES modules, facilitation methodologies, and monitoring mechanisms in line with Republic ACT No. 11908 and its Implementing Rules and Regulations. It strenghtens their capacity to provide technical assistance, train PES facilitators, and ensure consistent, quality implementation of the program across regions, provinces, and municipalities. It also supports effective parenting education and promotes the holistic development and protection of Filipino children and families.",
-    venue: "Cagayan de Oro",
-    target: "Provincial Social Welfare and Development Officers",
-    image: PES,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 103,
-    startDate: new Date(2026, 2, 9),
-    endDate: new Date(2026, 2, 13),
-    title: "(Localized) Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "Sunrise Garden Resort, Lake Sebu, South Cotabato",
-    target: "Local Government Units",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 104,
-    startDate: new Date(2026, 2, 16),
-    endDate: new Date(2026, 2, 20),
-    title: "(Localized) Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "St. Jude Cooperative Hotel and Events Center, Brgy. Isabang , Tayabas City, Quezon",
-    target: "Local Government Units",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 105,
-    startDate: new Date(2026, 2, 23),
-    endDate: new Date(2026, 2, 27),
-    title: "(Localized) Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "Davao De Oro",
-    target: "Local Government Units",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 106,
-    startDate: new Date(2026, 4, 18),
-    endDate: new Date(2026, 4, 22),
-    title: "(Localized) Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "Sta. Barbara",
-    target: "Local Government Units",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 107,
-    startDate: new Date(2026, 5, 8),
-    endDate: new Date(2026, 5, 12),
-    title: "(Localized) Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "NCR",
-    target: "Local Government Units",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 108,
-    startDate: new Date(2026, 6, 6),
-    endDate: new Date(2026, 6, 10),
-    title: "(Localized) Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "Misamis Oriental",
-    target: "Local Government Units",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 109,
-    startDate: new Date(2026, 7, 3),
-    endDate: new Date(2026, 7, 7),
-    title: "(Localized) Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "Lingayen, Pangasinan",
-    target: "Local Government Units",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 110,
-    startDate: new Date(2026, 8, 21),
-    endDate: new Date(2026, 8, 25),
-    title: "(Localized) Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "Taytay, Rizal",
-    target: "Local Government Units",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 111,
-    startDate: new Date(2026, 9, 26),
-    endDate: new Date(2026, 9, 30),
-    title: "(Localized) Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "MIMAROPA",
-    target: "Local Government Units",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-  {
-    id: 112,
-    startDate: new Date(2026, 0, 26),
-    endDate: new Date(2026, 0, 30),
-    title: "(Localized) Training on Pre-Marriage Counseling",
-    description: "This training enhances the competencies of pre-marriage counselors at the Local Government Units in conducting the Pre-marriage Orientation and Counseling (PMOC) Program.",
-    venue: "Mindanao Civic Center, Sagadan, Tubod, Lanao Del Norte",
-    target: "Local Government Units",
-    image: PMC,
-    colorId: 7,
-    tag: ""
-  },
-];
+const imageMap = {
+  "pes": PES,
+  "parent effectiveness": PES,
+  "lad": Lad,
+  "ladderized": Lad,
+  "tot": ToT,
+  "training of trainers": ToT,
+  "trainer": ToT,
+  "marriage": PMC,
+  "pre-marriage": PMC,
+  "parenting": Houseparenting,
+  "disaster": Disaster,
+  "4ps": Fourps,
+  "pantawid": Fourps,
+  "pilot": Pilot,
+  "rollout": Rollout,
+  "upskill": Upskill
+};
+
+const getTrainingImage = (title) => {
+  if (!title) return Random;
+  const cleanTitle = title.toLowerCase();
+  
+  for (const [keyword, asset] of Object.entries(imageMap)) {
+    if (cleanTitle.includes(keyword)) {
+      return asset;
+    }
+  }
+  return Random;
+};
 
 const THEME_COLOR = "#073763";
 
@@ -1391,7 +101,8 @@ const ExpandableDescription = ({ text }) => {
 const Calendar = () => {
   const today = new Date();
   const fixedYear = 2026;
-  const [selectedMonth, setSelectedMonth] = useState(2); 
+  
+  const [selectedMonth, setSelectedMonth] = useState(today.getMonth()); 
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [view, setView] = useState("calendar"); 
   const [searchQuery, setSearchQuery] = useState("");
@@ -1401,6 +112,67 @@ const Calendar = () => {
   
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  const [trainingSchedule, setTrainingSchedule] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false); 
+
+  const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbypw1GWQucXxdntcxpZWH_VNzhHZqx5rtWX3tHRpZdFqXtKrjfYDY7zaEOuhypQIeiz/exec";
+
+  const fetchLiveSchedule = async (isBackground = false) => {
+    if (!isBackground) setIsLoading(true);
+    setIsSyncing(true);
+    try {
+      const response = await fetch(GAS_WEB_APP_URL);
+      const dataJson = await response.json();
+
+      if (Array.isArray(dataJson)) {
+        const formattedSchedule = dataJson.map((item) => {
+          let matchedId = 1; 
+          const rawColorId = item.colorId ? item.colorId.toString().trim() : "";
+          
+          if (/^\d+$/.test(rawColorId)) {
+            matchedId = parseInt(rawColorId);
+          } else if (rawColorId !== "") {
+            const foundKey = Object.keys(trainingCategories).find(
+              key => trainingCategories[key].toLowerCase() === rawColorId.toLowerCase()
+            );
+            if (foundKey) matchedId = parseInt(foundKey);
+          }
+
+          return {
+            id: parseInt(item.id),
+            startDate: new Date(item.startDate),
+            endDate: new Date(item.endDate),
+            title: item.title || "Untitled Training",
+            description: item.description || "",
+            venue: item.venue || "TBD",
+            target: item.target || "General Participants",
+            colorId: matchedId,
+            tag: item.tag || "",
+            image: getTrainingImage(item.title)
+          };
+        });
+        setTrainingSchedule(formattedSchedule);
+      }
+    } catch (error) {
+      console.error("Failed to load live training tracking data matrix:", error);
+    } finally {
+      setIsLoading(false);
+      setIsSyncing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLiveSchedule();
+
+    const fiveMinutes = 5 * 60 * 1000;
+    const syncInterval = setInterval(() => {
+      fetchLiveSchedule(true);
+    }, fiveMinutes);
+
+    return () => clearInterval(syncInterval);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e) => { if (e.key === "Escape") setSelectedEvent(null); };
@@ -1427,7 +199,7 @@ const Calendar = () => {
       
       return matchesSearch && matchesCategory && matchesMonth;
     });
-  }, [searchQuery, filterCategoryId, selectedMonth]);
+  }, [searchQuery, filterCategoryId, selectedMonth, trainingSchedule]);
 
   const totalPages = Math.ceil(filteredEvents.length / itemsPerPage);
   const paginatedEvents = useMemo(() => {
@@ -1516,8 +288,18 @@ const Calendar = () => {
     return <div className="relative">{rows}{!hasEventsThisMonth && <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"><span className="text-[#073763]/10 font-black text-lg md:text-5xl uppercase tracking-[0.2em] text-center px-4">To Be Announced</span></div>}</div>;
   };
 
+  // RENDERS YOUR CUSTOM PRELOADER COMPONENT DURING THE SYNCHRONIZATION EVENT
+  if (isLoading) {
+    return <Preloader />;
+  }
+
   return (
-    <div className="pt-4 md:pt-16 font-sans relative min-h-screen text-[#073763] overflow-x-hidden">
+    <motion.div 
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="pt-4 md:pt-16 font-sans relative min-h-screen text-[#073763] overflow-x-hidden"
+    >
       <style>{`
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
@@ -1535,7 +317,6 @@ const Calendar = () => {
             <p className="text-[#ee1c25] font-bold tracking-[0.3em] md:tracking-[1.56em] text-[10px] md:text-sm uppercase">Training Calendar</p>
           </div>
           
-          {/* Logo Section */}
           <div className="flex items-center gap-3 md:gap-6 p-3 md:p-4">
             <img src={DSWDLogo} alt="DSWD Logo" className="h-10 md:h-21 w-auto object-contain" />
             <img src={TALogo} alt="TA Logo" className="h-[39px] md:h-[77px] w-auto object-contain" />
@@ -1595,8 +376,19 @@ const Calendar = () => {
               {view === "calendar" ? (
                 <motion.div key={`calendar-${selectedMonth}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   <div className="flex justify-between items-end px-2 md:px-4 mb-4 md:mb-6">
-                      <div className="flex flex-col">
+                      <div className="flex items-center gap-4">
                         <h2 className="text-xl md:text-5xl font-black uppercase tracking-tight">{fullMonths[selectedMonth]}</h2>
+                        
+                        <motion.button 
+                          onClick={() => fetchLiveSchedule(true)} 
+                          disabled={isSyncing}
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="p-2 bg-[#073763] text-white rounded-xl shadow-md hover:bg-[#134c81] flex items-center justify-center cursor-pointer disabled:opacity-50 mt-1 md:mt-3"
+                          title="Sync with Google Sheets"
+                        >
+                          <BsArrowClockwise size={16} className={`${isSyncing ? "animate-spin" : ""}`} />
+                        </motion.button>
                       </div>
                       <span className="text-[#073763]/30 font-black text-sm md:text-3xl leading-none">2026</span>
                   </div>
@@ -1608,9 +400,22 @@ const Calendar = () => {
               ) : (
                 <motion.div key={`list-${selectedMonth}`} initial="hidden" animate="visible" exit="exit" className="space-y-4">
                   <div className="bg-[#073763] p-3 md:p-4 rounded-2xl flex flex-col md:flex-row gap-3 shadow-xl relative">
-                    <div className="relative flex-1">
-                      <BsSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
-                      <input type="text" placeholder="Search..." className="w-full bg-white/10 border border-white/20 rounded-xl py-2.5 pl-10 text-sm text-white focus:outline-none placeholder:text-white/30" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                    <div className="relative flex-1 flex gap-2">
+                      <div className="relative flex-1">
+                        <BsSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
+                        <input type="text" placeholder="Search..." className="w-full bg-white/10 border border-white/20 rounded-xl py-2.5 pl-10 text-sm text-white focus:outline-none placeholder:text-white/30" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                      </div>
+                      
+                      <motion.button 
+                        onClick={() => fetchLiveSchedule(true)} 
+                        disabled={isSyncing}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="px-3.5 bg-white/10 border border-white/20 rounded-xl text-white flex items-center justify-center cursor-pointer hover:bg-white/20 disabled:opacity-50"
+                        title="Sync with Google Sheets"
+                      >
+                        <BsArrowClockwise size={18} className={`${isSyncing ? "animate-spin" : ""}`} />
+                      </motion.button>
                     </div>
                     
                     <div className="relative md:w-80">
@@ -1661,7 +466,7 @@ const Calendar = () => {
                             <span className="flex items-center gap-1.5"><BsGeoAltFill/> {event.venue.split('(')[0]}</span>
                           </div>
                           <h3 className="text-[#073763] font-black text-base md:text-lg group-hover:text-[#ee1c25] transition-colors leading-tight">{event.title}</h3>
-                          <p className="text-[9px] font-bold text-[#073763]/60 uppercase">{trainingCategories[event.colorId]}</p>
+                          <p className="text-[9px] font-bold text-[#073763]/60 uppercase">{trainingCategories[event.colorId] || "Training on Family"}</p>
                         </div>
                         {event.tag && <span className="shrink-0 bg-[#073763] text-white text-[8px] md:text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest">{event.tag}</span>}
                       </motion.div>
@@ -1734,7 +539,7 @@ const Calendar = () => {
           </div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 };
 
