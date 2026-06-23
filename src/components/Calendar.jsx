@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BsPeopleFill, BsSearch, BsCalendar3, BsListUl, BsGeoAltFill, BsChevronLeft, BsChevronRight, BsChevronDown, BsArrowClockwise } from "react-icons/bs";
-import { IoClose } from "react-icons/io5"; 
-import Preloader from "./Preloader"; // IMPORTING YOUR PRELOADER COMPONENT
+import { BsPeopleFill, BsSearch, BsCalendar3, BsListUl, BsGeoAltFill, BsChevronLeft, BsChevronRight, BsChevronDown } from "react-icons/bs";
+import { IoClose } from "react-icons/io5";
+import Preloader from "./Preloader"; 
 
 import DABuilding from "../assets/DABuilding.jpeg";
 import PMC from "../assets/PMC.JPG";
@@ -21,7 +21,6 @@ import TALogo from "../assets/TALogo.png";
 import BPLogo from "../assets/BPLogo.png";
 
 const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
 const trainingCategories = {
   1: "Training on Family",
   2: "DSWD Academy Functionality Trainings",
@@ -31,7 +30,6 @@ const trainingCategories = {
   6: "Training on Community-based Programs",
   7: "Disaster Response Trainings"
 };
-
 const imageMap = {
   "pes": PES,
   "parent effectiveness": PES,
@@ -50,11 +48,9 @@ const imageMap = {
   "rollout": Rollout,
   "upskill": Upskill
 };
-
 const getTrainingImage = (title) => {
   if (!title) return Random;
-  const cleanTitle = title.toLowerCase();
-  
+  const cleanTitle = title.toString().toLowerCase();
   for (const [keyword, asset] of Object.entries(imageMap)) {
     if (cleanTitle.includes(keyword)) {
       return asset;
@@ -64,12 +60,10 @@ const getTrainingImage = (title) => {
 };
 
 const THEME_COLOR = "#073763";
-
 const fullMonths = [
   "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", 
   "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER",
 ];
-
 const cardVariants = {
   hidden: { opacity: 0, x: 50 },
   visible: (i) => ({
@@ -79,7 +73,6 @@ const cardVariants = {
   }),
   exit: { opacity: 0, x: -20, transition: { duration: 0.2 } }
 };
-
 const ExpandableDescription = ({ text }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   if (!text) return null;
@@ -101,7 +94,6 @@ const ExpandableDescription = ({ text }) => {
 const Calendar = () => {
   const today = new Date();
   const fixedYear = 2026;
-  
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth()); 
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [view, setView] = useState("calendar"); 
@@ -115,40 +107,69 @@ const Calendar = () => {
 
   const [trainingSchedule, setTrainingSchedule] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSyncing, setIsSyncing] = useState(false); 
-
-  const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbypw1GWQucXxdntcxpZWH_VNzhHZqx5rtWX3tHRpZdFqXtKrjfYDY7zaEOuhypQIeiz/exec";
+  const [isSyncing, setIsSyncing] = useState(false);
+  const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwGjj_JxHssFj3Wfi5zukutQ7S2ALO1QQCXr3iZb35QPsk-IqfOS06OtpOgCiNVbVyxAQ/exec";
 
   const fetchLiveSchedule = async (isBackground = false) => {
     if (!isBackground) setIsLoading(true);
     setIsSyncing(true);
     try {
-      const response = await fetch(GAS_WEB_APP_URL);
+      const response = await fetch(`${GAS_WEB_APP_URL}?_cb=${new Date().getTime()}`);
       const dataJson = await response.json();
-
       if (Array.isArray(dataJson)) {
         const formattedSchedule = dataJson.map((item) => {
           let matchedId = 1; 
-          const rawColorId = item.colorId ? item.colorId.toString().trim() : "";
+          const rawAreaId = item.areaId ? item.areaId.toString().trim() : "";
           
-          if (/^\d+$/.test(rawColorId)) {
-            matchedId = parseInt(rawColorId);
-          } else if (rawColorId !== "") {
+          if (/^\d+$/.test(rawAreaId)) {
+            matchedId = parseInt(rawAreaId);
+          } else if (rawAreaId !== "") {
             const foundKey = Object.keys(trainingCategories).find(
-              key => trainingCategories[key].toLowerCase() === rawColorId.toLowerCase()
+              key => trainingCategories[key].toLowerCase() === rawAreaId.toLowerCase()
             );
             if (foundKey) matchedId = parseInt(foundKey);
           }
 
+          const parseLocalStr = (dateStr) => {
+            if (!dateStr) return new Date(fixedYear, selectedMonth, 1);
+            
+            const str = dateStr.toString().trim();
+
+            const textMonthMatch = str.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
+            if (textMonthMatch) {
+              const day = parseInt(textMonthMatch[1], 10);
+              const monthName = textMonthMatch[2].toUpperCase();
+              
+              const monthsIndexMap = {
+                JAN: 0, JANUARY: 0, FEB: 1, FEBRUARY: 1, MAR: 2, MARCH: 2,
+                APR: 3, APRIL: 3, MAY: 4, JUN: 5, JUNE: 5, JUL: 6, JULY: 6,
+                AUG: 7, AUGUST: 7, SEP: 8, SEPTEMBER: 8, OCT: 9, OCTOBER: 9,
+                NOV: 10, NOVEMBER: 10, DEC: 11, DECEMBER: 11
+              };
+              const month = monthsIndexMap[monthName] !== undefined ? monthsIndexMap[monthName] : 0;
+              return new Date(fixedYear, month, day);
+            }
+            
+            const standardMatch = str.match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+            if (standardMatch) {
+              return new Date(fixedYear, parseInt(standardMatch[2]) - 1, parseInt(standardMatch[3]));
+            }
+            
+            const parsedDate = new Date(str);
+            if (!isNaN(parsedDate.getTime())) {
+              return new Date(fixedYear, parsedDate.getMonth(), parsedDate.getDate());
+            }
+            return new Date(fixedYear, selectedMonth, 1);
+          };
           return {
-            id: parseInt(item.id),
-            startDate: new Date(item.startDate),
-            endDate: new Date(item.endDate),
+            id: parseInt(item.id) || Math.random(),
+            startDate: parseLocalStr(item.startDate),
+            endDate: parseLocalStr(item.endDate),
             title: item.title || "Untitled Training",
             description: item.description || "",
             venue: item.venue || "TBD",
             target: item.target || "General Participants",
-            colorId: matchedId,
+            areaId: matchedId,
             tag: item.tag || "",
             image: getTrainingImage(item.title)
           };
@@ -166,10 +187,10 @@ const Calendar = () => {
   useEffect(() => {
     fetchLiveSchedule();
 
-    const fiveMinutes = 5 * 60 * 1000;
+    const twoSeconds = 2 * 1000;
     const syncInterval = setInterval(() => {
       fetchLiveSchedule(true);
-    }, fiveMinutes);
+    }, twoSeconds);
 
     return () => clearInterval(syncInterval);
   }, []);
@@ -186,8 +207,8 @@ const Calendar = () => {
 
   const filteredEvents = useMemo(() => {
     return trainingSchedule.filter(event => {
-      const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = filterCategoryId === "All" || event.colorId === parseInt(filterCategoryId);
+      const matchesSearch = event.title.toString().toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = filterCategoryId === "All" || event.areaId === parseInt(filterCategoryId);
       
       const startM = event.startDate.getMonth();
       const startY = event.startDate.getFullYear();
@@ -214,30 +235,26 @@ const Calendar = () => {
     return `${startStr} - ${endStr}`;
   };
 
-  const { firstDay, daysArray, numRows } = useMemo(() => {
+  const { firstDay, numRows } = useMemo(() => {
     const fd = new Date(fixedYear, selectedMonth, 1).getDay();
     const dCount = new Date(fixedYear, selectedMonth + 1, 0).getDate();
-    const dArray = Array.from({ length: dCount }, (_, i) => new Date(fixedYear, selectedMonth, i + 1));
     const totalSlots = fd + dCount;
     const rows = Math.ceil(totalSlots / 7);
-    return { firstDay: fd, daysArray: dArray, numRows: rows };
+    return { firstDay: fd, numRows: rows };
   }, [selectedMonth]);
 
   const renderCalendarRows = () => {
     const rows = [];
     const hasEventsThisMonth = filteredEvents.length > 0;
-
     for (let r = 0; r < numRows; r++) {
       const weekStartOffset = r * 7;
       const weekStartDate = new Date(fixedYear, selectedMonth, weekStartOffset - firstDay + 1);
       const weekEndDate = new Date(fixedYear, selectedMonth, weekStartOffset - firstDay + 7);
-      
       const eventsInWeek = filteredEvents.filter(e => {
         const eStart = new Date(e.startDate).setHours(0,0,0,0);
         const eEnd = new Date(e.endDate).setHours(23,59,59,999);
         return eStart <= weekEndDate && eEnd >= weekStartDate;
       });
-      
       rows.push(
         <div key={`row-${r}`} className="relative border-b border-gray-400/50 min-h-[90px] md:min-h-[180px] flex flex-col overflow-visible">
           <div className="absolute inset-0 grid grid-cols-7 z-10 pointer-events-none">
@@ -288,7 +305,6 @@ const Calendar = () => {
     return <div className="relative">{rows}{!hasEventsThisMonth && <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"><span className="text-[#073763]/10 font-black text-lg md:text-5xl uppercase tracking-[0.2em] text-center px-4">To Be Announced</span></div>}</div>;
   };
 
-  // RENDERS YOUR CUSTOM PRELOADER COMPONENT DURING THE SYNCHRONIZATION EVENT
   if (isLoading) {
     return <Preloader />;
   }
@@ -332,16 +348,17 @@ const Calendar = () => {
             </div>
             
             <div className="relative">
+              {/* MOBILE MONTH VIEW CONTROLS */}
               <div className="lg:hidden flex flex-col gap-4">
-                <button onClick={() => setIsMonthDropdownOpen(!isMonthDropdownOpen)} className="w-full bg-[#073763] rounded-2xl p-4 flex justify-between items-center font-black text-white uppercase tracking-widest text-sm shadow-xl">
-                  <span>{fullMonths[selectedMonth]}</span>
-                  <BsChevronDown className={`transition-transform duration-300 ${isMonthDropdownOpen ? "rotate-180" : ""}`} />
+                <button onClick={() => setIsMonthDropdownOpen(!isMonthDropdownOpen)} className="w-full bg-[#073763] rounded-2xl p-4 flex justify-between items-center font-black text-white uppercase tracking-widest text-sm shadow-xl relative">
+                  <span className="w-full text-center pr-4">{fullMonths[selectedMonth]}</span>
+                  <BsChevronDown className={`absolute right-4 transition-transform duration-300 ${isMonthDropdownOpen ? "rotate-180" : ""}`} />
                 </button>
                 <AnimatePresence>
                   {isMonthDropdownOpen && (
                     <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="absolute top-16 left-0 right-0 z-50 bg-[#073763] rounded-2xl p-2 max-h-64 overflow-y-auto shadow-2xl border border-white/10">
                       {fullMonths.map((name, index) => (
-                        <button key={name} onClick={() => { setSelectedMonth(index); setIsMonthDropdownOpen(false); }} className={`w-full py-3 px-4 rounded-xl text-xs font-black text-left mb-1 transition-all ${selectedMonth === index ? "bg-white text-[#073763]" : "text-white hover:bg-white/10"}`}>
+                        <button key={name} onClick={() => { setSelectedMonth(index); setIsMonthDropdownOpen(false); }} className={`w-full py-3 px-4 rounded-xl text-xs font-black text-center mb-1 transition-all ${selectedMonth === index ? "bg-white text-[#073763]" : "text-white hover:bg-white/10"}`}>
                           {name}
                         </button>
                       ))}
@@ -353,6 +370,7 @@ const Calendar = () => {
                 </a>
               </div>
 
+              {/* DESKTOP MONTH INDEX VIEW */}
               <div className="hidden lg:block space-y-4">
                 <div className="glass-card rounded-3xl p-5">
                   <p className="text-[#073763] font-black uppercase tracking-widest text-[10px] mb-3 ml-2">Monthly Index</p>
@@ -378,17 +396,6 @@ const Calendar = () => {
                   <div className="flex justify-between items-end px-2 md:px-4 mb-4 md:mb-6">
                       <div className="flex items-center gap-4">
                         <h2 className="text-xl md:text-5xl font-black uppercase tracking-tight">{fullMonths[selectedMonth]}</h2>
-                        
-                        <motion.button 
-                          onClick={() => fetchLiveSchedule(true)} 
-                          disabled={isSyncing}
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          className="p-2 bg-[#073763] text-white rounded-xl shadow-md hover:bg-[#134c81] flex items-center justify-center cursor-pointer disabled:opacity-50 mt-1 md:mt-3"
-                          title="Sync with Google Sheets"
-                        >
-                          <BsArrowClockwise size={16} className={`${isSyncing ? "animate-spin" : ""}`} />
-                        </motion.button>
                       </div>
                       <span className="text-[#073763]/30 font-black text-sm md:text-3xl leading-none">2026</span>
                   </div>
@@ -405,17 +412,6 @@ const Calendar = () => {
                         <BsSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
                         <input type="text" placeholder="Search..." className="w-full bg-white/10 border border-white/20 rounded-xl py-2.5 pl-10 text-sm text-white focus:outline-none placeholder:text-white/30" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                       </div>
-                      
-                      <motion.button 
-                        onClick={() => fetchLiveSchedule(true)} 
-                        disabled={isSyncing}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="px-3.5 bg-white/10 border border-white/20 rounded-xl text-white flex items-center justify-center cursor-pointer hover:bg-white/20 disabled:opacity-50"
-                        title="Sync with Google Sheets"
-                      >
-                        <BsArrowClockwise size={18} className={`${isSyncing ? "animate-spin" : ""}`} />
-                      </motion.button>
                     </div>
                     
                     <div className="relative md:w-80">
@@ -466,7 +462,7 @@ const Calendar = () => {
                             <span className="flex items-center gap-1.5"><BsGeoAltFill/> {event.venue.split('(')[0]}</span>
                           </div>
                           <h3 className="text-[#073763] font-black text-base md:text-lg group-hover:text-[#ee1c25] transition-colors leading-tight">{event.title}</h3>
-                          <p className="text-[9px] font-bold text-[#073763]/60 uppercase">{trainingCategories[event.colorId] || "Training on Family"}</p>
+                          <p className="text-[9px] font-bold text-[#073763]/60 uppercase">{trainingCategories[event.areaId] || "Training on Family"}</p>
                         </div>
                         {event.tag && <span className="shrink-0 bg-[#073763] text-white text-[8px] md:text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest">{event.tag}</span>}
                       </motion.div>
