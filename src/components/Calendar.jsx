@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BsPeopleFill, BsSearch, BsCalendar3, BsListUl, BsGeoAltFill, BsChevronLeft, BsChevronRight, BsChevronDown } from "react-icons/bs";
 import { IoClose } from "react-icons/io5";
-import Preloader from "./Preloader"; 
 
 import DABuilding from "../assets/DABuilding.jpeg";
 import PMC from "../assets/PMC.JPG";
@@ -106,12 +105,10 @@ const Calendar = () => {
   const itemsPerPage = 5;
 
   const [trainingSchedule, setTrainingSchedule] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwGjj_JxHssFj3Wfi5zukutQ7S2ALO1QQCXr3iZb35QPsk-IqfOS06OtpOgCiNVbVyxAQ/exec";
 
-  const fetchLiveSchedule = async (isBackground = false) => {
-    if (!isBackground) setIsLoading(true);
+  const fetchLiveSchedule = async () => {
     setIsSyncing(true);
     try {
       const response = await fetch(`${GAS_WEB_APP_URL}?_cb=${new Date().getTime()}`);
@@ -179,7 +176,6 @@ const Calendar = () => {
     } catch (error) {
       console.error("Failed to load live training tracking data matrix:", error);
     } finally {
-      setIsLoading(false);
       setIsSyncing(false);
     }
   };
@@ -189,7 +185,7 @@ const Calendar = () => {
 
     const twoSeconds = 2 * 1000;
     const syncInterval = setInterval(() => {
-      fetchLiveSchedule(true);
+      fetchLiveSchedule();
     }, twoSeconds);
 
     return () => clearInterval(syncInterval);
@@ -304,10 +300,6 @@ const Calendar = () => {
     }
     return <div className="relative">{rows}{!hasEventsThisMonth && <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"><span className="text-[#073763]/10 font-black text-lg md:text-5xl uppercase tracking-[0.2em] text-center px-4">To Be Announced</span></div>}</div>;
   };
-
-  if (isLoading) {
-    return <Preloader />;
-  }
 
   return (
     <motion.div 
