@@ -132,7 +132,7 @@ const Information = ({ onClose, forceShow }) => {
               </h2>
 
               <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
-                Please be informed that the following trainings in this list have been <span className="font-bold text-gray-800">POSTPONED</span> until further notice.
+                Please be informed that the following trainings have been <span className="font-bold text-gray-800">POSTPONED</span> until further notice.
               </p>
 
               {/* Scrollable list frame wrapper with theme color matches */}
