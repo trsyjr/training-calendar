@@ -106,12 +106,24 @@ const Calendar = () => {
 
   const [trainingSchedule, setTrainingSchedule] = useState([]);
   const [isSyncing, setIsSyncing] = useState(false);
+  
   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwGjj_JxHssFj3Wfi5zukutQ7S2ALO1QQCXr3iZb35QPsk-IqfOS06OtpOgCiNVbVyxAQ/exec";
 
   const fetchLiveSchedule = async () => {
     setIsSyncing(true);
     try {
-      const response = await fetch(`${GAS_WEB_APP_URL}?_cb=${new Date().getTime()}`);
+      const response = await fetch(`${GAS_WEB_APP_URL}?_cb=${Date.now()}`, {
+        method: "GET",
+        headers: {
+          "Accept": "application/json"
+        },
+        mode: "cors"
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP Error Status: ${response.status}`);
+      }
+
       const dataJson = await response.json();
       if (Array.isArray(dataJson)) {
         const formattedSchedule = dataJson.map((item) => {
