@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BsPeopleFill, BsSearch, BsCalendar3, BsListUl, BsGeoAltFill, BsChevronLeft, BsChevronRight, BsChevronDown } from "react-icons/bs";
 import { IoClose } from "react-icons/io5";
@@ -30,30 +30,16 @@ const trainingCategories = {
   7: "Disaster Response Trainings"
 };
 const imageMap = {
-  "pes": PES,
-  "parent effectiveness": PES,
-  "lad": Lad,
-  "ladderized": Lad,
-  "tot": ToT,
-  "training of trainers": ToT,
-  "trainer": ToT,
-  "marriage": PMC,
-  "pre-marriage": PMC,
-  "parenting": Houseparenting,
-  "disaster": Disaster,
-  "4ps": Fourps,
-  "pantawid": Fourps,
-  "pilot": Pilot,
-  "rollout": Rollout,
-  "upskill": Upskill
+  "pes": PES, "parent effectiveness": PES, "lad": Lad, "ladderized": Lad,
+  "tot": ToT, "training of trainers": ToT, "trainer": ToT, "marriage": PMC,
+  "pre-marriage": PMC, "parenting": Houseparenting, "disaster": Disaster,
+  "4ps": Fourps, "pantawid": Fourps, "pilot": Pilot, "rollout": Rollout, "upskill": Upskill
 };
 const getTrainingImage = (title) => {
   if (!title) return Random;
   const cleanTitle = title.toString().toLowerCase();
   for (const [keyword, asset] of Object.entries(imageMap)) {
-    if (cleanTitle.includes(keyword)) {
-      return asset;
-    }
+    if (cleanTitle.includes(keyword)) return asset;
   }
   return Random;
 };
@@ -65,23 +51,17 @@ const fullMonths = [
 ];
 const cardVariants = {
   hidden: { opacity: 0, x: 50 },
-  visible: (i) => ({
-    opacity: 1,
-    x: 0,
-    transition: { delay: i * 0.15, duration: 0.5, ease: "easeOut" }
-  }),
+  visible: (i) => ({ opacity: 1, x: 0, transition: { delay: i * 0.15, duration: 0.5, ease: "easeOut" } }),
   exit: { opacity: 0, x: -20, transition: { duration: 0.2 } }
 };
 const ExpandableDescription = ({ text }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   if (!text) return null;
   const words = text.split(" ");
-  const isOverLimit = words.length > 20;
-  if (!isOverLimit) return <p className="text-gray-600 text-sm leading-relaxed">{text}</p>;
-  const displayText = isExpanded ? text : words.slice(0, 20).join(" ") + "...";
+  if (words.length <= 20) return <p className="text-gray-600 text-sm leading-relaxed">{text}</p>;
   return (
     <div className="text-gray-600 text-sm leading-relaxed">
-      <p>{displayText}
+      <p>{isExpanded ? text : words.slice(0, 20).join(" ") + "..."}
         <button onClick={() => setIsExpanded(!isExpanded)} className="ml-2 text-[#073763] font-black hover:underline focus:outline-none">
           {isExpanded ? "See Less" : "See More"}
         </button>
@@ -100,31 +80,33 @@ const Calendar = () => {
   const [filterCategoryId, setFilterCategoryId] = useState("All");
   const [isMonthDropdownOpen, setIsMonthDropdownOpen] = useState(false);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
-  
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
   const [trainingSchedule, setTrainingSchedule] = useState([]);
   const [isSyncing, setIsSyncing] = useState(false);
   
-  const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwGjj_JxHssFj3Wfi5zukutQ7S2ALO1QQCXr3iZb35QPsk-IqfOS06OtpOgCiNVbVyxAQ/exec";
+  // !!! PASTE YOUR RECENT GOOGLE WEB APP URL HERE !!!
+  const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyIU6q0A2pJzbGHCuyAuYL-TCaNRrr2wJFvCVR0opMGPdgjdptpjCGcCCd2W0NxREMuAA/exec";
+  const isFetchingRef = useRef(false);
 
   const fetchLiveSchedule = async () => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
     setIsSyncing(true);
     try {
+      // PRODUCTION HARDENED FETCH: Follows Google Web App redirects securely over CORS
       const response = await fetch(`${GAS_WEB_APP_URL}?_cb=${Date.now()}`, {
         method: "GET",
-        headers: {
-          "Accept": "application/json"
-        },
-        mode: "cors"
+        mode: "cors",
+        credentials: "omit",
+        redirect: "follow"
       });
       
-      if (!response.ok) {
-        throw new Error(`HTTP Error Status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP Error Status: ${response.status}`);
 
       const dataJson = await response.json();
+
       if (Array.isArray(dataJson)) {
         const formattedSchedule = dataJson.map((item) => {
           let matchedId = 1; 
@@ -139,21 +121,26 @@ const Calendar = () => {
             if (foundKey) matchedId = parseInt(foundKey);
           }
 
-          const parseLocalStr = (dateStr) => {
-            if (!dateStr) return new Date(fixedYear, selectedMonth, 1);
-            
-            const str = dateStr.toString().trim();
+          // DYNAMIC MAShed-DATE SEPARATION ENGINE
+          const parseLocalStr = (dateStr, isEndDate = false) => {
+            if (!dateStr) return null;
+            let str = dateStr.toString().trim();
+
+            // Splits structural mashed variants like "12 January 202616 January 2026"
+            const doubleDateMatch = str.match(/^(\d{1,2}\s+[A-Za-z]+\s+\d{4})\s*(\d{1,2}\s+[A-Za-z]+\s+\d{4})$/) || 
+                                    str.match(/^(\d{1,2}\s+[A-Za-z]+\s+2026)(\d{1,2}\s+[A-Za-z]+\s+2026)$/);
+            if (doubleDateMatch) {
+              str = isEndDate ? doubleDateMatch[2] : doubleDateMatch[1];
+            }
 
             const textMonthMatch = str.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
             if (textMonthMatch) {
               const day = parseInt(textMonthMatch[1], 10);
               const monthName = textMonthMatch[2].toUpperCase();
-              
               const monthsIndexMap = {
-                JAN: 0, JANUARY: 0, FEB: 1, FEBRUARY: 1, MAR: 2, MARCH: 2,
-                APR: 3, APRIL: 3, MAY: 4, JUN: 5, JUNE: 5, JUL: 6, JULY: 6,
-                AUG: 7, AUGUST: 7, SEP: 8, SEPTEMBER: 8, OCT: 9, OCTOBER: 9,
-                NOV: 10, NOVEMBER: 10, DEC: 11, DECEMBER: 11
+                JAN: 0, JANUARY: 0, FEB: 1, FEBRUARY: 1, MAR: 2, MARCH: 2, APR: 3, APRIL: 3, 
+                MAY: 4, JUN: 5, JUNE: 5, JUL: 6, JULY: 6, AUG: 7, AUGUST: 7, SEP: 8, SEPTEMBER: 8, 
+                OCT: 9, OCTOBER: 9, NOV: 10, NOVEMBER: 10, DEC: 11, DECEMBER: 11
               };
               const month = monthsIndexMap[monthName] !== undefined ? monthsIndexMap[monthName] : 0;
               return new Date(fixedYear, month, day);
@@ -163,45 +150,55 @@ const Calendar = () => {
             if (standardMatch) {
               return new Date(fixedYear, parseInt(standardMatch[2]) - 1, parseInt(standardMatch[3]));
             }
-            
+
             const parsedDate = new Date(str);
             if (!isNaN(parsedDate.getTime())) {
               return new Date(fixedYear, parsedDate.getMonth(), parsedDate.getDate());
             }
-            return new Date(fixedYear, selectedMonth, 1);
+            
+            return null;
           };
+
+          let parsedStart = parseLocalStr(item.startDate, false);
+          let parsedEnd = parseLocalStr(item.endDate || item.startDate, true);
+
+          // Safe fallback injection: guarantees the row renders even if format completely breaks
+          if (!parsedStart || isNaN(parsedStart.getTime())) {
+            parsedStart = new Date(fixedYear, selectedMonth, 15);
+          }
+          if (!parsedEnd || isNaN(parsedEnd.getTime())) {
+            parsedEnd = new Date(parsedStart);
+          }
+
           return {
             id: parseInt(item.id) || Math.random(),
-            startDate: parseLocalStr(item.startDate),
-            endDate: parseLocalStr(item.endDate),
-            title: item.title || "Untitled Training",
+            startDate: parsedStart,
+            endDate: parsedEnd,
+            title: item.title || "Untitled Training Grid Block",
             description: item.description || "",
             venue: item.venue || "TBD",
-            target: item.target || "General Participants",
+            target: item.target && item.target.toString().trim() !== "" ? item.target : " ",
             areaId: matchedId,
             tag: item.tag || "",
             image: getTrainingImage(item.title)
           };
         });
+
         setTrainingSchedule(formattedSchedule);
       }
     } catch (error) {
-      console.error("Failed to load live training tracking data matrix:", error);
+      console.error("Payload tracking error caught in production loop:", error);
     } finally {
       setIsSyncing(false);
+      isFetchingRef.current = false;
     }
   };
 
   useEffect(() => {
     fetchLiveSchedule();
-
-    const twoSeconds = 2 * 1000;
-    const syncInterval = setInterval(() => {
-      fetchLiveSchedule();
-    }, twoSeconds);
-
+    const syncInterval = setInterval(() => { fetchLiveSchedule(); }, 5000);
     return () => clearInterval(syncInterval);
-  }, []);
+  }, [selectedMonth]); 
 
   useEffect(() => {
     const handleKeyDown = (e) => { if (e.key === "Escape") setSelectedEvent(null); };
@@ -209,9 +206,7 @@ const Calendar = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedMonth, searchQuery, filterCategoryId]);
+  useEffect(() => { setCurrentPage(1); }, [selectedMonth, searchQuery, filterCategoryId]);
 
   const filteredEvents = useMemo(() => {
     return trainingSchedule.filter(event => {
@@ -232,22 +227,16 @@ const Calendar = () => {
 
   const totalPages = Math.ceil(filteredEvents.length / itemsPerPage);
   const paginatedEvents = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return filteredEvents.slice(startIndex, startIndex + itemsPerPage);
+    return filteredEvents.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   }, [filteredEvents, currentPage]);
 
   const formatDateRange = (start, end) => {
-    const options = { day: 'numeric', month: 'short' };
-    const startStr = start.toLocaleDateString('en-GB', options);
-    const endStr = end.toLocaleDateString('en-GB', options);
-    return `${startStr} - ${endStr}`;
+    return `${start.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - ${end.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`;
   };
 
   const { firstDay, numRows } = useMemo(() => {
     const fd = new Date(fixedYear, selectedMonth, 1).getDay();
-    const dCount = new Date(fixedYear, selectedMonth + 1, 0).getDate();
-    const totalSlots = fd + dCount;
-    const rows = Math.ceil(totalSlots / 7);
+    const rows = Math.ceil((fd + new Date(fixedYear, selectedMonth + 1, 0).getDate()) / 7);
     return { firstDay: fd, numRows: rows };
   }, [selectedMonth]);
 
@@ -258,22 +247,22 @@ const Calendar = () => {
       const weekStartOffset = r * 7;
       const weekStartDate = new Date(fixedYear, selectedMonth, weekStartOffset - firstDay + 1);
       const weekEndDate = new Date(fixedYear, selectedMonth, weekStartOffset - firstDay + 7);
+      
       const eventsInWeek = filteredEvents.filter(e => {
         const eStart = new Date(e.startDate).setHours(0,0,0,0);
         const eEnd = new Date(e.endDate).setHours(23,59,59,999);
         return eStart <= weekEndDate && eEnd >= weekStartDate;
       });
+
       rows.push(
         <div key={`row-${r}`} className="relative border-b border-gray-400/50 min-h-[90px] md:min-h-[180px] flex flex-col overflow-visible">
           <div className="absolute inset-0 grid grid-cols-7 z-10 pointer-events-none">
             {Array.from({ length: 7 }).map((_, i) => {
-              const dayIdx = weekStartOffset + i - firstDay;
-              const date = new Date(fixedYear, selectedMonth, dayIdx + 1);
-              const isCurrentMonth = date.getMonth() === selectedMonth;
+              const date = new Date(fixedYear, selectedMonth, weekStartOffset + i - firstDay + 1);
               const isToday = date.toDateString() === today.toDateString();
               return (
                 <div key={`date-${i}`} className="p-1 md:p-3 border-r border-gray-400/50 last:border-r-0">
-                  <div className={`text-[10px] md:text-lg font-medium ${isToday ? "bg-[#990000] text-white rounded-full w-5 h-5 md:w-10 md:h-10 flex items-center justify-center shadow-lg font-black" : isCurrentMonth ? "text-black" : "text-black/30"}`}>
+                  <div className={`text-[10px] md:text-lg font-medium ${isToday ? "bg-[#990000] text-white rounded-full w-5 h-5 md:w-10 md:h-10 flex items-center justify-center shadow-lg font-black" : date.getMonth() === selectedMonth ? "text-black" : "text-black/30"}`}>
                     {date.getDate()}
                   </div>
                 </div>
@@ -290,13 +279,8 @@ const Calendar = () => {
               return (
                 <div key={`${event.id}-${r}`} className="grid grid-cols-7 w-full gap-0 px-px">
                   <motion.div 
-                    initial={{ opacity: 0, scaleX: 0 }}
-                    animate={{ opacity: 1, scaleX: 1 }}
-                    style={{ 
-                      gridColumn: `${startCol} / span ${duration}`, 
-                      backgroundColor: THEME_COLOR,
-                      transformOrigin: "left" 
-                    }} 
+                    initial={{ opacity: 0, scaleX: 0 }} animate={{ opacity: 1, scaleX: 1 }}
+                    style={{ gridColumn: `${startCol} / span ${duration}`, backgroundColor: THEME_COLOR, transformOrigin: "left" }} 
                     whileHover={{ scale: 1.01, filter: "brightness(1.2)" }} 
                     className="text-white text-[7px] md:text-[14px] h-4 md:h-8 flex items-center px-1 md:px-3 cursor-pointer truncate rounded md:rounded-lg border border-white/20 shadow-sm md:shadow-md font-medium pointer-events-auto" 
                     onClick={() => setSelectedEvent(event)}
@@ -314,29 +298,19 @@ const Calendar = () => {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="pt-4 md:pt-16 font-sans relative min-h-screen text-[#073763] overflow-x-hidden"
-    >
+    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: "easeOut" }} className="pt-4 md:pt-16 font-sans relative min-h-screen text-[#073763] overflow-x-hidden">
       <style>{`
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: ${THEME_COLOR}; border-radius: 20px; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #f1f1f1; } ::-webkit-scrollbar-thumb { background: ${THEME_COLOR}; border-radius: 20px; }
         .glass-card { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
         .calendar-main-body { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(25px); border: 1px solid rgba(156, 163, 175, 0.5); }
       `}</style>
-
       <div className="fixed inset-0 z-0" style={{ backgroundImage: `linear-gradient(to bottom, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.8)), url(${DABuilding})`, backgroundSize: "cover", backgroundPosition: "center" }} />
-
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6">
         <header className="mb-6 md:mb-12 pt-4 md:pt-8 flex flex-col-reverse lg:flex-row items-center justify-between gap-6">
           <div className="text-center lg:text-left">
             <h1 className="text-2xl md:text-5xl font-black tracking-tighter text-[#073763]">DSWD ACADEMY 2026</h1>
             <p className="text-[#ee1c25] font-bold tracking-[0.3em] md:tracking-[1.56em] text-[10px] md:text-sm uppercase">Training Calendar</p>
           </div>
-          
           <div className="flex items-center gap-3 md:gap-6 p-3 md:p-4">
             <img src={DSWDLogo} alt="DSWD Logo" className="h-10 md:h-21 w-auto object-contain" />
             <img src={TALogo} alt="TA Logo" className="h-[39px] md:h-[77px] w-auto object-contain" />
@@ -350,9 +324,7 @@ const Calendar = () => {
               <button onClick={() => setView("calendar")} className={`flex-1 py-2.5 md:py-3 rounded-xl flex items-center justify-center gap-2 text-xs md:text-sm font-black transition-all ${view === "calendar" ? "bg-white text-[#073763]" : "text-white hover:bg-white/10"}`}><BsCalendar3/> Calendar</button>
               <button onClick={() => setView("list")} className={`flex-1 py-2.5 md:py-3 rounded-xl flex items-center justify-center gap-2 text-xs md:text-sm font-black transition-all ${view === "list" ? "bg-white text-[#073763]" : "text-white hover:bg-white/10"}`}><BsListUl/> List</button>
             </div>
-            
             <div className="relative">
-              {/* MOBILE MONTH VIEW CONTROLS */}
               <div className="lg:hidden flex flex-col gap-4">
                 <button onClick={() => setIsMonthDropdownOpen(!isMonthDropdownOpen)} className="w-full bg-[#073763] rounded-2xl p-4 flex justify-between items-center font-black text-white uppercase tracking-widest text-sm shadow-xl relative">
                   <span className="w-full text-center pr-4">{fullMonths[selectedMonth]}</span>
@@ -362,33 +334,23 @@ const Calendar = () => {
                   {isMonthDropdownOpen && (
                     <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="absolute top-16 left-0 right-0 z-50 bg-[#073763] rounded-2xl p-2 max-h-64 overflow-y-auto shadow-2xl border border-white/10">
                       {fullMonths.map((name, index) => (
-                        <button key={name} onClick={() => { setSelectedMonth(index); setIsMonthDropdownOpen(false); }} className={`w-full py-3 px-4 rounded-xl text-xs font-black text-center mb-1 transition-all ${selectedMonth === index ? "bg-white text-[#073763]" : "text-white hover:bg-white/10"}`}>
-                          {name}
-                        </button>
+                        <button key={name} onClick={() => { setSelectedMonth(index); setIsMonthDropdownOpen(false); }} className={`w-full py-3 px-4 rounded-xl text-xs font-black text-center mb-1 transition-all ${selectedMonth === index ? "bg-white text-[#073763]" : "text-white hover:bg-white/10"}`}>{name}</button>
                       ))}
                     </motion.div>
                   )}
                 </AnimatePresence>
-                <a href="https://sites.google.com/dswd.gov.ph/dswdacademyfaqs2026/faqs" target="_blank" rel="noopener noreferrer" className="bg-[#073763] text-white p-4 rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest shadow-lg">
-                    Frequently Asked Questions
-                </a>
+                <a href="https://sites.google.com/dswd.gov.ph/dswdacademyfaqs2026/faqs" target="_blank" rel="noopener noreferrer" className="bg-[#073763] text-white p-4 rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest shadow-lg">Frequently Asked Questions</a>
               </div>
-
-              {/* DESKTOP MONTH INDEX VIEW */}
               <div className="hidden lg:block space-y-4">
                 <div className="glass-card rounded-3xl p-5">
                   <p className="text-[#073763] font-black uppercase tracking-widest text-[10px] mb-3 ml-2">Monthly Index</p>
                   <div className="space-y-1">
                     {fullMonths.map((name, index) => (
-                      <button key={name} onClick={() => setSelectedMonth(index)} className={`w-full py-2.5 px-5 rounded-xl text-[11px] font-black text-left transition-all ${selectedMonth === index ? "bg-[#073763] text-white shadow-lg scale-105" : "text-[#073763]/70 hover:bg-[#073763]/10"}`}>
-                        <span className="opacity-40 mr-3">{(index + 1).toString().padStart(2, '0')}</span>{name}
-                      </button>
+                      <button key={name} onClick={() => setSelectedMonth(index)} className={`w-full py-2.5 px-5 rounded-xl text-[11px] font-black text-left transition-all ${selectedMonth === index ? "bg-[#073763] text-white shadow-lg scale-105" : "text-[#073763]/70 hover:bg-[#073763]/10"}`}><span className="opacity-40 mr-3">{(index + 1).toString().padStart(2, '0')}</span>{name}</button>
                     ))}
                   </div>
                 </div>
-                <a href="https://sites.google.com/dswd.gov.ph/dswdacademyfaqs2026/faqs" target="_blank" rel="noopener noreferrer" className="w-full bg-[#073763] hover:bg-[#134c81] text-white p-5 rounded-3xl flex flex-col items-center justify-center gap-2 text-center font-black text-[11px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02]">
-                  Frequently Asked Questions
-                </a>
+                <a href="https://sites.google.com/dswd.gov.ph/dswdacademyfaqs2026/faqs" target="_blank" rel="noopener noreferrer" className="w-full bg-[#073763] hover:bg-[#134c81] text-white p-5 rounded-3xl flex flex-col items-center justify-center gap-2 text-center font-black text-[11px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02]">Frequently Asked Questions</a>
               </div>
             </div>
           </aside>
@@ -398,9 +360,7 @@ const Calendar = () => {
               {view === "calendar" ? (
                 <motion.div key={`calendar-${selectedMonth}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   <div className="flex justify-between items-end px-2 md:px-4 mb-4 md:mb-6">
-                      <div className="flex items-center gap-4">
-                        <h2 className="text-xl md:text-5xl font-black uppercase tracking-tight">{fullMonths[selectedMonth]}</h2>
-                      </div>
+                      <h2 className="text-xl md:text-5xl font-black uppercase tracking-tight">{fullMonths[selectedMonth]}</h2>
                       <span className="text-[#073763]/30 font-black text-sm md:text-3xl leading-none">2026</span>
                   </div>
                   <div className="grid grid-cols-7 text-center font-black text-white bg-[#073763] rounded-xl mb-3 py-3 md:py-4 uppercase text-[9px] md:text-xs">
@@ -411,34 +371,21 @@ const Calendar = () => {
               ) : (
                 <motion.div key={`list-${selectedMonth}`} initial="hidden" animate="visible" exit="exit" className="space-y-4">
                   <div className="bg-[#073763] p-3 md:p-4 rounded-2xl flex flex-col md:flex-row gap-3 shadow-xl relative">
-                    <div className="relative flex-1 flex gap-2">
-                      <div className="relative flex-1">
-                        <BsSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
-                        <input type="text" placeholder="Search..." className="w-full bg-white/10 border border-white/20 rounded-xl py-2.5 pl-10 text-sm text-white focus:outline-none placeholder:text-white/30" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-                      </div>
+                    <div className="relative flex-1">
+                      <BsSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
+                      <input type="text" placeholder="Search..." className="w-full bg-white/10 border border-white/20 rounded-xl py-2.5 pl-10 text-sm text-white focus:outline-none placeholder:text-white/30" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                     </div>
-                    
                     <div className="relative md:w-80">
-                      <button 
-                        onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
-                        className="w-full bg-white/10 border border-white/20 rounded-xl py-2.5 px-4 flex justify-between items-center text-[10px] font-black text-white uppercase tracking-wider text-left"
-                      >
+                      <button onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)} className="w-full bg-white/10 border border-white/20 rounded-xl py-2.5 px-4 flex justify-between items-center text-[10px] font-black text-white uppercase tracking-wider text-left">
                         <span className="truncate">{filterCategoryId === "All" ? "All Categories" : trainingCategories[filterCategoryId]}</span>
                         <BsChevronDown className={`transition-transform duration-300 ${isCategoryDropdownOpen ? "rotate-180" : ""}`} />
                       </button>
                       <AnimatePresence>
                         {isCategoryDropdownOpen && (
-                          <motion.div 
-                            initial={{ opacity: 0, y: 10 }} 
-                            animate={{ opacity: 1, y: 0 }} 
-                            exit={{ opacity: 0, y: 10 }} 
-                            className="absolute top-full left-0 right-0 z-50 mt-2 bg-[#073763] rounded-2xl p-2 max-h-64 overflow-y-auto shadow-2xl border border-white/10"
-                          >
+                          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute top-full left-0 right-0 z-50 mt-2 bg-[#073763] rounded-2xl p-2 max-h-64 overflow-y-auto shadow-2xl border border-white/10">
                             <button onClick={() => { setFilterCategoryId("All"); setIsCategoryDropdownOpen(false); }} className={`w-full py-2.5 px-4 rounded-xl text-[10px] font-black text-left mb-1 transition-all ${filterCategoryId === "All" ? "bg-white text-[#073763]" : "text-white hover:bg-white/10"}`}>ALL CATEGORIES</button>
                             {Object.entries(trainingCategories).map(([id, label]) => (
-                              <button key={id} onClick={() => { setFilterCategoryId(id); setIsCategoryDropdownOpen(false); }} className={`w-full py-2.5 px-4 rounded-xl text-[10px] font-black text-left mb-1 transition-all uppercase ${filterCategoryId === id ? "bg-white text-[#073763]" : "text-white hover:bg-white/10"}`}>
-                                {label}
-                              </button>
+                              <button key={id} onClick={() => { setFilterCategoryId(id); setIsCategoryDropdownOpen(false); }} className={`w-full py-2.5 px-4 rounded-xl text-[10px] font-black text-left mb-1 transition-all uppercase ${filterCategoryId === id ? "bg-white text-[#073763]" : "text-white hover:bg-white/10"}`}>{label}</button>
                             ))}
                           </motion.div>
                         )}
@@ -449,17 +396,7 @@ const Calendar = () => {
                   <div className="flex flex-col gap-3">
                     <AnimatePresence mode="popLayout">
                     {paginatedEvents.length > 0 ? paginatedEvents.map((event, index) => (
-                      <motion.div 
-                        key={event.id} 
-                        custom={index} 
-                        variants={cardVariants} 
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        layout
-                        onClick={() => setSelectedEvent(event)} 
-                        className="bg-white/80 rounded-2xl p-4 md:p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center cursor-pointer hover:shadow-xl transition-all border-l-[6px] border-[#073763] shadow-md group relative overflow-hidden"
-                      >
+                      <motion.div key={event.id} custom={index} variants={cardVariants} initial="hidden" animate="visible" exit="exit" layout onClick={() => setSelectedEvent(event)} className="bg-white/80 rounded-2xl p-4 md:p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center cursor-pointer hover:shadow-xl transition-all border-l-[6px] border-[#073763] shadow-md group relative overflow-hidden">
                         <div className="flex-1 w-full space-y-1">
                           <div className="flex flex-wrap gap-x-4 gap-y-1 text-[9px] font-black text-[#073763]/50 uppercase tracking-widest">
                             <span className="flex items-center gap-1.5"><BsCalendar3/> {formatDateRange(event.startDate, event.endDate)}</span>
@@ -476,25 +413,9 @@ const Calendar = () => {
 
                   {filteredEvents.length > itemsPerPage && (
                     <div className="flex items-center justify-center gap-6 pt-4 font-black text-[#073763] uppercase tracking-widest text-[10px] md:text-xs">
-                      <button 
-                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                        disabled={currentPage === 1}
-                        className={`flex items-center gap-2 transition-opacity ${currentPage === 1 ? "opacity-20 cursor-not-allowed" : "hover:text-[#ee1c25]"}`}
-                      >
-                        <BsChevronLeft strokeWidth={1} /> Prev
-                      </button>
-                      
-                      <span className="bg-[#073763] text-white px-4 py-1.5 rounded-full shadow-lg">
-                        {currentPage} out of {totalPages}
-                      </span>
-
-                      <button 
-                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                        disabled={currentPage === totalPages}
-                        className={`flex items-center gap-2 transition-opacity ${currentPage === totalPages ? "opacity-20 cursor-not-allowed" : "hover:text-[#ee1c25]"}`}
-                      >
-                        Next <BsChevronRight strokeWidth={1} />
-                      </button>
+                      <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className={`flex items-center gap-2 transition-opacity ${currentPage === 1 ? "opacity-20 cursor-not-allowed" : "hover:text-[#ee1c25]"}`}><BsChevronLeft strokeWidth={1} /> Prev</button>
+                      <span className="bg-[#073763] text-white px-4 py-1.5 rounded-full shadow-lg">{currentPage} out of {totalPages}</span>
+                      <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className={`flex items-center gap-2 transition-opacity ${currentPage === totalPages ? "opacity-20 cursor-not-allowed" : "hover:text-[#ee1c25]"}`}>Next <BsChevronRight strokeWidth={1} /></button>
                     </div>
                   )}
                 </motion.div>
@@ -512,16 +433,8 @@ const Calendar = () => {
               <div className="w-full h-48 md:h-80 relative shrink-0">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10" />
                 <img src={selectedEvent.image} alt={selectedEvent.title} className="w-full h-full object-cover" />
-                <button onClick={() => setSelectedEvent(null)} className="absolute top-4 right-4 z-20 bg-white/20 backdrop-blur-md p-1.5 rounded-full text-white hover:bg-white hover:text-[#073763] transition-all border border-white/30">
-                  <IoClose size={20} />
-                </button>
-                <div className="absolute bottom-4 left-6 z-20">
-                  {selectedEvent.tag && selectedEvent.tag.trim() !== "" && (
-                    <span className="bg-[#ee1c25] text-white text-[8px] md:text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">
-                      {selectedEvent.tag}
-                    </span>
-                  )}
-                </div>
+                <button onClick={() => setSelectedEvent(null)} className="absolute top-4 right-4 z-20 bg-white/20 backdrop-blur-md p-1.5 rounded-full text-white hover:bg-white hover:text-[#073763] transition-all border border-white/30"><IoClose size={20} /></button>
+                <div className="absolute bottom-4 left-6 z-20">{selectedEvent.tag && selectedEvent.tag.trim() !== "" && <span className="bg-[#ee1c25] text-white text-[8px] md:text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">{selectedEvent.tag}</span>}</div>
               </div>
               <div className="flex-1 p-6 md:p-10 overflow-y-auto custom-scrollbar">
                 <h2 className="text-xl md:text-3xl font-black text-[#073763] mb-4 md:mb-6 leading-tight">{selectedEvent.title}</h2>
